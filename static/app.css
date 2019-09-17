@@ -42,7 +42,7 @@ button:hover {
 
 }
 
-#white {
+#white, #undo {
     background-color: white;
     border: none;
     color: black;

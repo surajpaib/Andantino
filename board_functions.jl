@@ -86,3 +86,9 @@ function prettyprintboard(board)
         println(p_out)
     end
 end
+
+
+function undo(board)
+    
+    
+end

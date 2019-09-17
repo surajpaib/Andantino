@@ -1,5 +1,6 @@
 include("game_moves.jl")
 
+
 function play_random_turn(player)
     moves_to_play = possible_moves(andantino_board)
     move = moves_to_play[rand(1:end)]
@@ -19,3 +20,4 @@ function play_turn(player, move)
         return false
     end
 end
+
