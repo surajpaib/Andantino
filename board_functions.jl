@@ -8,7 +8,7 @@ function create_board()
 
 end
 
-function evaluate_board(board)
+function evaluate_board(board::Array{Array{Int64, 1}})
     occupied_hexagons = Array{Int64, 1}[]
     for (i, row) in enumerate(board)
         for (j, hexagon) in enumerate(row)
@@ -21,7 +21,7 @@ function evaluate_board(board)
 end
 
 
-function player_check_board(board, player)
+function player_check_board(board::Array{Array{Int64, 1}}, player::Int64)
     occupied_hexagons = Array{Int64, 1}[]
     for row in board
         for hexagon in row
@@ -34,7 +34,7 @@ function player_check_board(board, player)
 end
 
 
-function get_player_positions(board, player)
+function get_player_positions(board::Array{Array{Int64, 1}}, player::Int64)
     occupied_hexagons = Array{Int64, 1}[]
     for (i, row) in enumerate(board)
         for (j, hexagon) in enumerate(row)
@@ -46,7 +46,7 @@ function get_player_positions(board, player)
     return occupied_hexagons
 end
 
-function check_board_limits(x)
+function check_board_limits(x::Array{Int64, 1})
     if ((x[1] > 0) && ( x[2] > 0))
         if ((x[1] < 11) && (x[2] < x[1] + 10))
             return true
@@ -65,7 +65,7 @@ function check_board_limits(x)
 end
 
 
-function prettyprintboard(board)
+function prettyprintboard(board::Array{Array{Int64, 1}})
     sizes = [size(row) for row in board]
     max_width = maximum(sizes)[1] + 1
     for row in board
@@ -85,10 +85,4 @@ function prettyprintboard(board)
         p_out = string(p_out, "\n")
         println(p_out)
     end
-end
-
-
-function undo(board)
-    
-    
 end

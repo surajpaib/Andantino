@@ -26,7 +26,7 @@ handle(w, "white") do arg
     end
     println("\n************************************************************************\n")
 
-    move = play_random_turn(11)
+    move = play_turn_search(11, 6)
 
     if move_count > 5 && check_game_end(move, andantino_board)
 
@@ -139,7 +139,7 @@ handle(w, "black") do arg
     end
 
     println("\n************************************************************************\n")
-    move = play_random_turn(22)
+    move = play_turn_search(22, 3)
 
     if move_count > 5 && check_game_end(move, andantino_board)
       body!(w, """<div id="welcome"> WHITE WINS!!!<br/><br/>Play Another Game? <br/><br/><button id="white" onclick='Blink.msg("start", "white")'>WHITE</button><br/><button id="black" onclick='Blink.msg("start", "black")'>BLACK</button><br/><button id="twoplayer" onclick='Blink.msg("start", "twoplayer")'>TWO PLAYER</button></div>""");
