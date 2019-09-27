@@ -54,7 +54,7 @@ function check_surround_piece(last_hexagon::Array{Int64, 1}, board::Array{Array{
 
     board_flood_fill = deepcopy(board)
     flood_fill_algorithm([1, 1], board_flood_fill, opponent)
-    return player_check_board(board_flood_fill, opponent)
+    return evaluate_board(board_flood_fill, opponent)
 end
 
 

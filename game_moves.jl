@@ -49,8 +49,9 @@ function possible_moves(board::Array{Array{Int64, 1}})
 end
 
 
-function possible_positions(board::Array{Array{Int64, 1}}, played_moves::Array{Array{Int64, 1}})
+function possible_moves(board::Array{Array{Int64, 1}}, played_moves::Array{Array{Int64, 1}})
     occupied_hexagons = evaluate_board(board)
+
 
     for move in played_moves
         if ~(move in occupied_hexagons)
@@ -71,17 +72,12 @@ function possible_positions(board::Array{Array{Int64, 1}}, played_moves::Array{A
             possible_positions2 = find_adjacent_hexagons(hexagon_duo[2])
             intersected_positions = intersect(possible_positions1, possible_positions2)
             for moves in intersected_positions
-                if ~(moves in moves_possible)
+                if ~(moves in moves_possible) && check_board_limits(moves) && ~(moves in occupied_hexagons)
                     push!(moves_possible, moves)
                 end
             end
         end
 
-        for moves in occupied_hexagons
-            filter!(x->x!=moves, moves_possible)
-        end
-        
-        filter!(x->check_board_limits(x), moves_possible)
         return moves_possible
     end
 end

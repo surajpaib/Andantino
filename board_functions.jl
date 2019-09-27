@@ -20,9 +20,18 @@ function evaluate_board(board::Array{Array{Int64, 1}})
     return occupied_hexagons
 end
 
+function evaluate_board(board::Array{Array{Int64, 1}}, played_moves::Array{Array{Int64, 1}}, player_positions::Array{Int64, 1})
+    board_copy = deepcopy(board)
 
-function player_check_board(board::Array{Array{Int64, 1}}, player::Int64)
-    occupied_hexagons = Array{Int64, 1}[]
+    for (i, move) in enumerate(played_moves)
+        board_copy[move[1]][move[2]] = player_positions[i]
+    end
+
+    return board_copy
+end
+
+
+function evaluate_board(board::Array{Array{Int64, 1}}, player::Int64)
     for row in board
         for hexagon in row
             if hexagon == player

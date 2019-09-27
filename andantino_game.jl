@@ -6,6 +6,7 @@ include("win_conditions.jl")
 using Blink
 
 w = Window()
+debug = false
 andantino_board = create_board()
 original_board = deepcopy(andantino_board)
 move_count = 0
@@ -15,8 +16,12 @@ handle(w, "white") do arg
   global original_board = deepcopy(andantino_board)
   if play_turn(22, collect(eval(Meta.parse(arg))))
     move_count = move_count + 1
+    # if move_count > 3
+    #   global debug = true
+    # end
 
-    if move_count > 5 && check_game_end(collect(eval(Meta.parse(arg))), andantino_board)
+
+    if move_count > 4 && check_game_end(collect(eval(Meta.parse(arg))), andantino_board)
 
       body!(w, """<div id="welcome"> WHITE WINS!!!<br/><br/>Play Another Game? <br/><br/><button id="white" onclick='Blink.msg("start", "white")'>WHITE</button><br/><button id="black" onclick='Blink.msg("start", "black")'>BLACK</button><br/><button id="twoplayer" onclick='Blink.msg("start", "twoplayer")'>TWO PLAYER</button></div>""");
       global andantino_board = create_board()
@@ -26,9 +31,9 @@ handle(w, "white") do arg
     end
     println("\n************************************************************************\n")
 
-    move = play_turn_search(11, 6)
+    move = play_turn(11, 5)
 
-    if move_count > 5 && check_game_end(move, andantino_board)
+    if move_count > 3 && check_game_end(move, andantino_board)
 
       body!(w, """<div id="welcome"> BLACK WINS!!!<br/><br/>Play Another Game? <br/><br/><button id="white" onclick='Blink.msg("start", "white")'>WHITE</button><br/><button id="black" onclick='Blink.msg("start", "black")'>BLACK</button><br/><button id="twoplayer" onclick='Blink.msg("start", "twoplayer")'>TWO PLAYER</button></div>""");
       global andantino_board = create_board()
@@ -129,7 +134,7 @@ handle(w, "black") do arg
     move_count = move_count + 1
 
     println("Move Count: ", move_count)
-    if move_count > 5 && check_game_end(played_move, andantino_board)
+    if move_count > 4 && check_game_end(played_move, andantino_board)
 
       body!(w, """<div id="welcome"> BLACK WINS!!!<br/><br/>Play Another Game? <br/><br/><button id="white" onclick='Blink.msg("start", "white")'>WHITE</button><br/><button id="black" onclick='Blink.msg("start", "black")'>BLACK</button><br/><button id="twoplayer" onclick='Blink.msg("start", "twoplayer")'>TWO PLAYER</button></div>""");
       global andantino_board = create_board()
@@ -139,9 +144,9 @@ handle(w, "black") do arg
     end
 
     println("\n************************************************************************\n")
-    move = play_turn_search(22, 3)
+    move = play_turn(22, 5)
 
-    if move_count > 5 && check_game_end(move, andantino_board)
+    if move_count > 3 && check_game_end(move, andantino_board)
       body!(w, """<div id="welcome"> WHITE WINS!!!<br/><br/>Play Another Game? <br/><br/><button id="white" onclick='Blink.msg("start", "white")'>WHITE</button><br/><button id="black" onclick='Blink.msg("start", "black")'>BLACK</button><br/><button id="twoplayer" onclick='Blink.msg("start", "twoplayer")'>TWO PLAYER</button></div>""");
       global andantino_board = create_board()
       global move_count = 0
