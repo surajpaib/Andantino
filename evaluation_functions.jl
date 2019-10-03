@@ -2,7 +2,9 @@ function evaluation_function(board::Array{Array{Int64, 1}}, played_moves::Array{
     eval_board = evaluate_board(board, played_moves, player_positions)
     # prettyprintboard(eval_board)
     score = evaluate_five_in_row(eval_board, player, played_moves)
-    println("Played Moves: ", played_moves, " Score:", score)
+    if debug
+        println("Played Moves: ", played_moves, " Score:", score)
+    end
     return score
 end
 
@@ -15,8 +17,6 @@ function evaluate_five_in_row(board::Array{Array{Int64, 1}}, player::Int64, play
         for (n, move) in enumerate(played_moves)
             if occupied_hexagons[i] == move
                 factor = size(played_moves)[1] - n + 1
-            else
-                factor = 1
             end
         end
 

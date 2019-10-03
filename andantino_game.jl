@@ -11,6 +11,120 @@ andantino_board = create_board()
 original_board = deepcopy(andantino_board)
 move_count = 0
 
+handle(w, "ai") do arg
+  while true
+    sleep(0.2)
+    global original_board = deepcopy(andantino_board)
+    move = play_turn(22, 5)
+    move_count = move_count + 1
+    # if move_count > 3
+    #   global debug = true
+    # end
+
+
+    if move_count > 4 && check_game_end(move, andantino_board)
+
+      body!(w, """<div id="welcome"> WHITE WINS!! <img src="https://images.theconversation.com/files/38926/original/5cwx89t4-1389586191.jpg"  width="50" height="50"></img>!<br/><br/>Play Another Game? <br/><br/><button id="white" onclick='Blink.msg("start", "white")'>WHITE</button><br/><button id="black" onclick='Blink.msg("start", "black")'>BLACK</button><br/><button id="twoplayer" onclick='Blink.msg("start", "twoplayer")'>TWO PLAYER</button></div>""");
+      global andantino_board = create_board()
+      global move_count = 0
+
+      return
+    end
+
+    move = play_turn(11, 5)
+
+    if move_count > 3 && check_game_end(move, andantino_board)
+
+      body!(w, """<div id="welcome"> BLACK WINS!!!<img src="https://images.theconversation.com/files/38926/original/5cwx89t4-1389586191.jpg"  width="50" height="50"></img>!<br/><br/>Play Another Game? <br/><br/><button id="white" onclick='Blink.msg("start", "white")'>WHITE</button><br/><button id="black" onclick='Blink.msg("start", "black")'>BLACK</button><br/><button id="twoplayer" onclick='Blink.msg("start", "twoplayer")'>TWO PLAYER</button></div>""");
+      global andantino_board = create_board()
+      global move_count = 0
+
+      return
+    end
+
+
+    occupied_hexagons = evaluate_board(andantino_board)
+    white_positions = []
+    black_positions = []
+    for hex in occupied_hexagons
+      if andantino_board[hex[1]][hex[2]] == 11
+        push!(black_positions, hex)
+      
+      elseif andantino_board[hex[1]][hex[2]] == 22
+        push!(white_positions, hex)
+      end
+    end
+
+    body!(w, """<script>
+    var white_positions = eval('$white_positions'.replace('Any', ''));
+    var black_positions = eval('$black_positions'.replace('Any', ''));
+                  (function printBtn() {
+                    var container = document.createElement("div");
+
+                    var undo_button = document.createElement("button");
+                    undo_button.innerHTML = "UNDO";
+                
+                    undo_button.setAttribute('id', 'undo');
+                    undo_button.setAttribute('onclick', 'Blink.msg("undo","white")');
+
+                    container.style.margin = '15px 0';
+                    container.appendChild(undo_button);
+
+                    for (var j=1; j<20; j++){
+                    var rowdiv = document.createElement("div");
+                        if (j<=10){
+                          for (var i = 1; i <= 10 + j - 1; i++) {
+                        var btn = document.createElement("button");
+                        btn.innerHTML = "&#x2B21;";
+                        btn.setAttribute('class', 'hex-buttons');
+                        btn.setAttribute('id', String(j) + ',' + String(i));
+
+                        rowdiv.appendChild(btn);
+                      }
+                      }else{
+                        for (var i = 1; i <= 29 - j; i++) {
+                        var btn = document.createElement("button");
+                        btn.innerHTML = "&#x2B21;";
+                        btn.setAttribute('class', 'hex-buttons');
+
+                        rowdiv.appendChild(btn);
+                      }
+                      }
+                  
+                      rowdiv.setAttribute('style', 'text-align:center');
+                      container.appendChild(rowdiv);
+                      document.body.appendChild(container);
+                    }
+                  
+                  })();
+
+                  white_positions.forEach(function(element) {
+                      var added_piece = document.getElementById(String(element[0])+","+String(element[1]));
+                      added_piece.innerHTML = "&#x2B22;";
+                      added_piece.style.color = '#ffffff';
+                      added_piece.removeAttribute('onclick');
+                  });
+
+
+                black_positions.forEach(function(element) {
+                      var added_piece = document.getElementById(String(element[0])+","+String(element[1]));
+                      added_piece.innerHTML = "&#x2B22;";
+                      added_piece.style.color = '#000000';
+                      added_piece.removeAttribute('onclick');
+                  });
+                  
+                
+            </script>""");
+    if debug
+      prettyprintboard(andantino_board)
+    end
+
+  end
+
+
+end
+
+
 handle(w, "white") do arg
   
   global original_board = deepcopy(andantino_board)
@@ -31,8 +145,8 @@ handle(w, "white") do arg
     end
     println("\n************************************************************************\n")
 
-    move = play_turn(11, 5)
-
+    move = play_turn(11, 10, 10)
+    
     if move_count > 3 && check_game_end(move, andantino_board)
 
       body!(w, """<div id="welcome"> BLACK WINS!!!<br/><br/>Play Another Game? <br/><br/><button id="white" onclick='Blink.msg("start", "white")'>WHITE</button><br/><button id="black" onclick='Blink.msg("start", "black")'>BLACK</button><br/><button id="twoplayer" onclick='Blink.msg("start", "twoplayer")'>TWO PLAYER</button></div>""");
@@ -671,7 +785,7 @@ handle(w, "start") do arg
 end
 
 load!(w, "static/app.css")
-body!(w, """<div id="welcome"> Welcome to Andantino!!!<br/><br/>Select your color: <br/><br/><button id="white" onclick='Blink.msg("start", "white")'>WHITE</button><br/><button id="black" onclick='Blink.msg("start", "black")'>BLACK</button><br/><button id="twoplayer" onclick='Blink.msg("start", "twoplayer")'>TWO PLAYER</button></div>""");
+body!(w, """<div id="welcome"> Welcome to Andantino!!!<br/><br/>Select your color: <br/><br/><button id="white" onclick='Blink.msg("start", "white")'>WHITE</button><br/><button id="black" onclick='Blink.msg("start", "black")'>BLACK</button><br/><button id="twoplayer" onclick='Blink.msg("start", "twoplayer")'>TWO PLAYER</button><br/><button id="ai" onclick='Blink.msg("ai", "start")'>AI vs AI</button></div>""");
 
 while true  
     yield() 
