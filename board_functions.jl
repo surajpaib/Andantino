@@ -31,6 +31,19 @@ function evaluate_board(board::Array{Array{Int64, 1}}, played_moves::Array{Array
 end
 
 
+function check_flood_fill_edge_case(board::Array{Array{Int64, 1}}, player::Int64)
+    for (i, row) in enumerate(board)
+        for (j, hexagon) in enumerate(row)
+            if hexagon == player
+                flood_fill_algorithm([i,1], board, player)
+                return evaluate_board(board, player)
+            end
+        end
+    end
+    return false
+end
+
+
 function evaluate_board(board::Array{Array{Int64, 1}}, player::Int64)
     for row in board
         for hexagon in row

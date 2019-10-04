@@ -53,8 +53,8 @@ function check_surround_piece(last_hexagon::Array{Int64, 1}, board::Array{Array{
     end
 
     board_flood_fill = deepcopy(board)
-    flood_fill_algorithm([10, 10], board_flood_fill, opponent)
-    return evaluate_board(board_flood_fill, opponent)
+    flood_fill_algorithm([1, 1], board_flood_fill, opponent)
+    return check_flood_fill_edge_case(board_flood_fill, opponent)
 end
 
 
@@ -70,7 +70,6 @@ function flood_fill_algorithm(position::Array{Int64, 1}, board_flood_fill::Array
         end
     end  
 end
-
 
 function check_game_end(last_hexagon::Array{Int64, 1}, board::Array{Array{Int64, 1}})
     return check_five_in_a_row(last_hexagon, board) || check_surround_piece(last_hexagon, board)
