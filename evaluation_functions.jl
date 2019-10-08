@@ -4,7 +4,10 @@ function evaluation_function(board::Array{Array{Int64, 1}}, played_moves::Array{
     eval_board = evaluate_board(board, played_moves, player_positions)
     # prettyprintboard(eval_board)
     opponent = get_opponent(player)
+
     score = evaluate_five_in_row(eval_board, player, played_moves) - evaluate_five_in_row(eval_board, opponent, played_moves)
+
+
     if debug
         println("\n Played Moves: ", played_moves, " Score:", score)
     end

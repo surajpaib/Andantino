@@ -49,8 +49,40 @@ function play_turn(player::Int64, search_ply::Int64)
 end
 
 
-function play_turn(player::Int64, max_search_ply::Int64, iterative_deeping_time::Int64)
+# function play_turn(player::Int64, max_search_ply::Int64, iterative_deeping_time::Int64)
 
+#     moves_to_play = possible_moves(andantino_board)
+
+#     if debug
+#         println("All moves to play: ", moves_to_play)    
+#     end
+
+#     total_time = 0
+#     pvs_move = Array{Int64, 1}[]
+#     move = Int64[]
+
+#     for ply in 1:max_search_ply
+#         if ply == 1 || ~(pvs)
+#             return_vals, id_time, _, _, _ = @timed iterative_deeping(ply, player, moves_to_play)
+#         else
+#             return_vals, id_time, _, _, _ = @timed iterative_deeping(ply, player, moves_to_play, pvs_move)
+#         end
+#         move = return_vals[1]
+#         pvs_move = return_vals[2]
+#         total_time = total_time + id_time
+#         if total_time > iterative_deeping_time
+#             break
+#         end
+#     end
+
+#     andantino_board[move[1]][move[2]] = player
+#     return move
+
+# end
+
+
+function play_turn(player::Int64, max_search_ply::Int64, iterative_deeping_time::Int64)
+    hash = computeHash(ZobristTable, andantino_board)
     moves_to_play = possible_moves(andantino_board)
 
     if debug
@@ -58,17 +90,11 @@ function play_turn(player::Int64, max_search_ply::Int64, iterative_deeping_time:
     end
 
     total_time = 0
-    pvs_move = Array{Int64, 1}[]
     move = Int64[]
 
     for ply in 1:max_search_ply
-        if ply == 1 || ~(pvs)
-            return_vals, id_time, _, _, _ = @timed iterative_deeping(ply, player, moves_to_play)
-        else
-            return_vals, id_time, _, _, _ = @timed iterative_deeping(ply, player, moves_to_play, pvs_move)
-        end
+        return_vals, id_time, _, _, _ = @timed iterative_deeping(ply, player, moves_to_play, hash)
         move = return_vals[1]
-        pvs_move = return_vals[2]
         total_time = total_time + id_time
         if total_time > iterative_deeping_time
             break

@@ -3,7 +3,10 @@ include("board_functions.jl")
 include("utils.jl")
 include("win_conditions.jl")
 include("ui_render.jl")
+include("transposition_tables.jl")
 
+
+ZobristTable = initTable()
 debug = false
 andantino_board = create_board()
 original_board = deepcopy(andantino_board)
@@ -86,7 +89,12 @@ function play_handler(turn::String, search_ply::Int64, arg)
         return
       end
 
-      move = play_turn(opponent, search_ply)
+      if iterativedeepening
+        move = play_turn(opponent, search_ply, 3)
+  
+      else
+        move = play_turn(opponent, search_ply)
+      end
       
       if move_count > 3 && check_game_end(move, andantino_board)
 

@@ -19,6 +19,11 @@ function find_adjacent_hexagons(hexagon::Array{Int64, 1})
 end
 
 
+
+# function get_hexagons_at_radius(hexagon::Array{Int64, 1}, radius::Int64)
+
+# end
+
 # function find_hexagons_radius(hexagon::Array{Int64, 1}, radius::Int64)
 
 #     surrounding_hexagons = set()

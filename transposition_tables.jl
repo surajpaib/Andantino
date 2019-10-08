@@ -1,6 +1,4 @@
-include("utils.jl")
-include("board_functions.jl")
-
+TT = Dict()
 
 function initTable()
     RandomValues = rand(Int64, 542)
@@ -43,31 +41,18 @@ function computeHash(ZobristTable, andantino_board)
 end
 
 
-# TT = Dict<Int64, Any>()
+function transpositionTableLookup(node)
+    if haskey(TT, node)
+        return TT[node]
+    else
+        return Dict() 
+    end
+end
 
 
+function transpositionTableStore(node, entry)
+    TT[node] = entry   
+end
 
 
-andantino_board = create_board()
-ZobristTable = initTable()
-original_board = deepcopy(andantino_board)
-
-# println(ZobristTable)
-
-
-play_turn(11, [10, 10])
-
-play_turn(22, [9, 10])
-play_turn(11, [10, 11])
-
-hash = computeHash(ZobristTable, andantino_board)
-
-println("Hash For [10, 10], [9, 10], [10, 9]: ", hash)
-
-
-andantino_board = deepcopy(original_board)
-play_turn(11, [10, 10])
-play_turn(22, [10, 11])
-play_turn(11, [9, 10])
-println("Hash For [10, 10], [10, 9], [9, 10]: ", hash)
 
