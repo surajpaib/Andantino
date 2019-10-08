@@ -11,11 +11,34 @@ function find_adjacent_hexagons(hexagon::Array{Int64, 1})
     elseif hexagon[1] == 10
         adjacent_positions = [[hexagon[1] - 1, hexagon[2] - 1], [hexagon[1] - 1, hexagon[2]], [hexagon[1], hexagon[2] - 1], [hexagon[1], hexagon[2] + 1], [hexagon[1] + 1, hexagon[2] - 1], [hexagon[1] + 1, hexagon[2]]]
     else
+        
         adjacent_positions = [[hexagon[1] - 1, hexagon[2]], [hexagon[1] - 1, hexagon[2] + 1], [hexagon[1], hexagon[2] - 1], [hexagon[1], hexagon[2] + 1], [hexagon[1] + 1, hexagon[2] - 1], [hexagon[1] + 1, hexagon[2]]]
     end
 
     return adjacent_positions
 end
+
+
+# function find_hexagons_radius(hexagon::Array{Int64, 1}, radius::Int64)
+
+#     surrounding_hexagons = set()
+#     count = 1
+#     adjacent_hexes = find_adjacent_hexagons(hexagon)
+
+#     while count != radius
+#         adjacent_hexes = []
+#         for hex in adjacent_hexes
+#             adjacent_positions = find_adjacent_hexagons(hex)
+#             for position in adjacent_positions
+#                 push!(adjacent_hexes, position)
+#         end
+#         count = count + 1
+
+
+#     end
+
+#     return adjacent_positions
+# end
 
 
 function possible_moves(board::Array{Array{Int64, 1}})

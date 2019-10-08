@@ -39,7 +39,8 @@ function play_turn(player::Int64, search_ply::Int64)
     end
     best_move = findmax(move_scores)[2]
     if debug
-        println("Total Moves Checked :", n_evaluations * size(moves_to_play)[1])
+        println("Total Moves Checked : ", n_evaluations * size(moves_to_play)[1])
+        println("Best Move @ ", best_move, " with score: ", move_scores[best_move])
     end
     
     andantino_board[moves_to_play[best_move][1]][moves_to_play[best_move][2]] = player
@@ -59,8 +60,9 @@ function play_turn(player::Int64, max_search_ply::Int64, iterative_deeping_time:
     total_time = 0
     pvs_move = Array{Int64, 1}[]
     move = Int64[]
+
     for ply in 1:max_search_ply
-        if ply == 1
+        if ply == 1 || ~(pvs)
             return_vals, id_time, _, _, _ = @timed iterative_deeping(ply, player, moves_to_play)
         else
             return_vals, id_time, _, _, _ = @timed iterative_deeping(ply, player, moves_to_play, pvs_move)
@@ -68,9 +70,7 @@ function play_turn(player::Int64, max_search_ply::Int64, iterative_deeping_time:
         move = return_vals[1]
         pvs_move = return_vals[2]
         total_time = total_time + id_time
-        println("Searching at ply: ", ply, " took: ", id_time, " s")
         if total_time > iterative_deeping_time
-            println("Total Search Time: ", total_time)
             break
         end
     end

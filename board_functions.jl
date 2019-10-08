@@ -56,6 +56,15 @@ function evaluate_board(board::Array{Array{Int64, 1}}, player::Int64)
 end
 
 
+function get_opponent(player::Int64)
+    if player == 22
+        return 11
+    elseif player == 11
+        return 22
+    end
+end
+
+
 function get_player_positions(board::Array{Array{Int64, 1}}, player::Int64)
     occupied_hexagons = Array{Int64, 1}[]
     for (i, row) in enumerate(board)

@@ -1,11 +1,30 @@
+include("board_functions.jl")
+
 function evaluation_function(board::Array{Array{Int64, 1}}, played_moves::Array{Array{Int64, 1}}, player_positions::Array{Int64, 1}, player::Int64)
     eval_board = evaluate_board(board, played_moves, player_positions)
     # prettyprintboard(eval_board)
-    score = evaluate_five_in_row(eval_board, player, played_moves)
+    opponent = get_opponent(player)
+    score = evaluate_five_in_row(eval_board, player, played_moves) - evaluate_five_in_row(eval_board, opponent, played_moves)
     if debug
-        println("Played Moves: ", played_moves, " Score:", score)
+        println("\n Played Moves: ", played_moves, " Score:", score)
     end
     return score
+end
+
+
+function conv_kernel_evaluation(board::Array{Array{Int64, 1}}, played_moves::Array{Array{Int64, 1}}, player_positions::Array{Int64, 1}, player::Int64)
+    eval_board = evaluate_board(board, played_moves, player_positions)
+    opponent = get_opponent(player)
+    score = evaluate_conv(eval_board, player, played_moves) - evaluate_conv(eval_board, opponent, played_moves)
+    if debug
+        println("\n Played Moves: ", played_moves, " Score:", score)
+    end
+    return score
+end
+
+
+function evaluate_conv(board::Array{Array{Int64, 1}}, player::Int64)
+
 end
 
 
@@ -14,11 +33,7 @@ function evaluate_five_in_row(board::Array{Array{Int64, 1}}, player::Int64, play
     factor = 1
     scores = []
     for i in 1:size(occupied_hexagons)[1]
-        for (n, move) in enumerate(played_moves)
-            if occupied_hexagons[i] == move
-                factor = size(played_moves)[1] - n + 1
-            end
-        end
+        factor = 1
 
         for index in 1:6
             score = 0.0
@@ -107,7 +122,7 @@ function evaluate_five_in_row(board::Array{Array{Int64, 1}}, player::Int64, play
                         
                     
                 </script>""");
-        println("Maximum Score: ", maximum(scores))
+        println("\n Maximum Score: ", maximum(scores))
         sleep(2)
     end
     
