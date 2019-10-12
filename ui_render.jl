@@ -34,7 +34,7 @@ function render_page(message)
 
     <br/><br/>
 
-    <label class="container">Iterative Deeping
+    <label class="container">Transposition Tables
     <input type="checkbox" id="iterativedeep" che>
     <span class="checkmark"></span>
     </label><br/>

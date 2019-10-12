@@ -1,5 +1,6 @@
 include("game_moves.jl")
 include("alpha_beta_search.jl")
+include("iterative_deepening.jl")
 
 function play_turn(player::Int64)
     moves_to_play = possible_moves(andantino_board)
@@ -24,6 +25,7 @@ end
 
 function play_turn(player::Int64, search_ply::Int64)
     moves_to_play = possible_moves(andantino_board)
+    main_player = deepcopy(player)
     if debug
         println("All moves to play: ", moves_to_play)    
     end
@@ -33,7 +35,8 @@ function play_turn(player::Int64, search_ply::Int64)
 
         played_moves = Array{Int64,1}[]
         move_values = Int64[]
-        score, n_evaluations, played_moves = ab_search(player, player, move, search_ply - 1, -99999.0, 99999.0, false, played_moves, move_values, andantino_board, n_evaluations)
+        score, n_evaluations, played_moves = minimax_search_alpha_beta(main_player, player, move, search_ply -1, false, -Inf, Inf,  played_moves, move_values, andantino_board, n_evaluations)
+
         push!(move_scores, score)
 
     end
@@ -43,46 +46,45 @@ function play_turn(player::Int64, search_ply::Int64)
         println("Best Move @ ", best_move, " with score: ", move_scores[best_move])
     end
     
-    andantino_board[moves_to_play[best_move][1]][moves_to_play[best_move][2]] = player
+    andantino_board[moves_to_play[best_move][1]][moves_to_play[best_move][2]] = main_player
     return moves_to_play[best_move]
 
 end
 
 
-# function play_turn(player::Int64, max_search_ply::Int64, iterative_deeping_time::Int64)
-
-#     moves_to_play = possible_moves(andantino_board)
-
-#     if debug
-#         println("All moves to play: ", moves_to_play)    
-#     end
-
-#     total_time = 0
-#     pvs_move = Array{Int64, 1}[]
-#     move = Int64[]
-
-#     for ply in 1:max_search_ply
-#         if ply == 1 || ~(pvs)
-#             return_vals, id_time, _, _, _ = @timed iterative_deeping(ply, player, moves_to_play)
-#         else
-#             return_vals, id_time, _, _, _ = @timed iterative_deeping(ply, player, moves_to_play, pvs_move)
-#         end
-#         move = return_vals[1]
-#         pvs_move = return_vals[2]
-#         total_time = total_time + id_time
-#         if total_time > iterative_deeping_time
-#             break
-#         end
-#     end
-
-#     andantino_board[move[1]][move[2]] = player
-#     return move
-
-# end
-
-
 function play_turn(player::Int64, max_search_ply::Int64, iterative_deeping_time::Int64)
-    hash = computeHash(ZobristTable, andantino_board)
+
+    moves_to_play = possible_moves(andantino_board)
+    if debug
+        println("All moves to play: ", moves_to_play)    
+    end
+
+    total_time = 0
+    pvs_move = Array{Int64, 1}[]
+    move = Int64[]
+
+    for ply in 1:max_search_ply
+        println("Ply:", ply, ", PVS Flag: ", pvs)
+        if ply == 1 || ~(pvs)
+            return_vals, id_time, _, _, _ = @timed iterative_deeping(ply, player, moves_to_play)
+        else
+            return_vals, id_time, _, _, _ = @timed iterative_deeping(ply, player, moves_to_play, pvs_move)
+        end
+        move = return_vals[1]
+        pvs_move = return_vals[2]
+        total_time = total_time + id_time
+        if total_time > iterative_deeping_time
+            break
+        end
+    end
+
+    andantino_board[move[1]][move[2]] = player
+    return move
+
+end
+
+
+function play_turn(player::Int64, max_search_ply::Int64, iterative_deeping_time::Int64, hash)
     moves_to_play = possible_moves(andantino_board)
 
     if debug
@@ -91,10 +93,9 @@ function play_turn(player::Int64, max_search_ply::Int64, iterative_deeping_time:
 
     total_time = 0
     move = Int64[]
-
+    println("Hash: ", hash)
     for ply in 1:max_search_ply
-        return_vals, id_time, _, _, _ = @timed iterative_deeping(ply, player, moves_to_play, hash)
-        move = return_vals[1]
+        move, id_time, _, _, _ = @timed iterative_deeping(ply, player, moves_to_play, hash)
         total_time = total_time + id_time
         if total_time > iterative_deeping_time
             break

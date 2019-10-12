@@ -19,11 +19,16 @@ function runAIvsAI()
   
     global original_board = deepcopy(andantino_board)
     if iterativedeepening
+      hash = computeHash(ZobristTable, andantino_board)
+      move = play_turn(22, search_ply, 3, hash)
+
+    elseif pvs
       move = play_turn(22, search_ply, 3)
 
     else
       move = play_turn(22, search_ply)
     end
+    
     move_count = move_count + 1
 
     if move_count > 4 && check_game_end(move, andantino_board)
@@ -34,7 +39,12 @@ function runAIvsAI()
     end
 
     if iterativedeepening
+      hash = computeHash(ZobristTable, andantino_board)
+      move = play_turn(11, search_ply, 3, hash)
+
+    elseif pvs
       move = play_turn(11, search_ply, 3)
+
     else
       move = play_turn(11, search_ply)
     end 
