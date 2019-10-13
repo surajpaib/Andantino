@@ -76,7 +76,7 @@ function render_win_page(winner)
 end
 
 function render_body(turn)
-
+    playable_moves = possible_moves(andantino_board)
     occupied_hexagons = evaluate_board(andantino_board)
     white_positions = []
     black_positions = []
@@ -89,10 +89,11 @@ function render_body(turn)
       end
     end
   
-  
     body!(w, """<script>
     var white_positions = eval('$white_positions'.replace('Any', ''));
     var black_positions = eval('$black_positions'.replace('Any', ''));
+    var playable_moves = eval('$playable_moves'.replace('Array{Int64,1}', ''));
+
     (function printBtn() {
       var container = document.createElement("div");
       container.style.margin = '15px 0';
@@ -150,6 +151,12 @@ function render_body(turn)
         added_piece.style.color = '#000000';
         added_piece.removeAttribute('onclick');
         });
+
+        playable_moves.forEach(function(element) {
+          var added_piece = document.getElementById(String(element[0])+","+String(element[1]));
+          added_piece.innerHTML = "&#x2B21;";
+          added_piece.style.color = '#00B3CE';
+          });
       
     })();
   

@@ -11,10 +11,6 @@ function iterative_deeping(ply, player, moves_to_play, hash::Int64)
         push!(move_scores, score)
     end
     best_move = findmax(move_scores)[2]
-    if debug
-        println("Total Moves Checked :", n_evaluations * size(moves_to_play)[1])
-    end
-    
     move = moves_to_play[best_move] 
     return move
 end
@@ -35,10 +31,6 @@ function iterative_deeping(ply, player, moves_to_play)
     end
     best_move = findmax(move_scores)[2]
     pvs_move = pvs_moves[best_move]
-    if debug
-        println("Total Moves Checked :", n_evaluations * size(moves_to_play)[1])
-    end
-    
     move = moves_to_play[best_move] 
     return move, pvs_move
 end
@@ -59,9 +51,6 @@ function iterative_deeping(ply, player, moves_to_play, pvs_move)
     end
     best_move = findmax(move_scores)[2]
     pvs_move = pvs_moves[best_move]
-    if debug
-        println("Total Moves Checked :", n_evaluations * size(moves_to_play)[1])
-    end
     move = moves_to_play[best_move] 
     return move, pvs_move
 end

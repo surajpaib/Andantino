@@ -46,12 +46,7 @@ end
 
 function check_surround_piece(last_hexagon::Array{Int64, 1}, board::Array{Array{Int64, 1}})
     current_player = board[last_hexagon[1]][last_hexagon[2]]
-    if current_player == 22
-        opponent = 11
-    else
-        opponent = 22
-    end
-
+    opponent = get_opponent(current_player)
     board_flood_fill = deepcopy(board)
     flood_fill_algorithm([1, 1], board_flood_fill, opponent)
     return check_flood_fill_edge_case(board_flood_fill, opponent)

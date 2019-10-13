@@ -10,11 +10,8 @@ function minimax_search(main_player, player::Int64, position::Array{Int64, 1}, d
     push!(player_positions, player)
 
     if depth == 0
-        # println("Played Moves at Terminal Node", played_moves)
         score = evaluation_function(board, played_moves, player_positions, main_player)
-        # println("Reached End Node!! Score: ", score)
         n_eval = n_eval + 1
-
         pop!(played_moves)
         pop!(player_positions)
 
@@ -25,8 +22,6 @@ function minimax_search(main_player, player::Int64, position::Array{Int64, 1}, d
         score = -99999.0
         node_moves = possible_moves(board, played_moves)
         for child in node_moves
-            # println("Children Moves for MAX: ", child)
-
             value, n_eval, played_moves = minimax_search(main_player, player, child, depth - 1, false, played_moves, player_positions, board, n_eval)
             if (value > score)
                 score = value
@@ -37,15 +32,7 @@ function minimax_search(main_player, player::Int64, position::Array{Int64, 1}, d
         score = 99999.0
         node_moves = possible_moves(board, played_moves)
         for child in node_moves
-
-            
-            if player == 22
-                opponent = 11
-            else
-                opponent = 22
-            end
-            # println("Children Moves for MIN: ", child)
-            
+            opponent = get_opponent(player)
             value, n_eval, played_moves = minimax_search(main_player, opponent, child, depth - 1, true, played_moves, player_positions, board, n_eval)
             if (value < score)
                 score = value
@@ -68,11 +55,8 @@ function minimax_search_alpha_beta(main_player, player::Int64, position::Array{I
     push!(player_positions, player)
 
     if depth == 0
-        # println("Played Moves at Terminal Node", played_moves)
         score = evaluation_function(board, played_moves, player_positions, main_player)
-        # println("Reached End Node!! Score: ", score)
         n_eval = n_eval + 1
-
         pop!(played_moves)
         pop!(player_positions)
 
@@ -83,7 +67,6 @@ function minimax_search_alpha_beta(main_player, player::Int64, position::Array{I
         score = -99999.0
         node_moves = possible_moves(board, played_moves)
         for child in node_moves
-            # println("Children Moves for MAX: ", child)
 
             value, n_eval, played_moves = minimax_search_alpha_beta(main_player, player, child, depth - 1, false, alpha, beta, played_moves, player_positions, board, n_eval)
             if (value > score)
@@ -96,7 +79,6 @@ function minimax_search_alpha_beta(main_player, player::Int64, position::Array{I
             end
 
             if ( alpha >= beta)
-                println("Cut-off")
                 break
             end
 
@@ -108,12 +90,7 @@ function minimax_search_alpha_beta(main_player, player::Int64, position::Array{I
         for child in node_moves
 
             
-            if player == 22
-                opponent = 11
-            else
-                opponent = 22
-            end
-            # println("Children Moves for MIN: ", child)
+            opponent = get_opponent(player)
             
             value, n_eval, played_moves = minimax_search_alpha_beta(main_player, opponent, child, depth - 1, true, alpha, beta, played_moves, player_positions, board, n_eval)
             if (value < score)
@@ -125,7 +102,6 @@ function minimax_search_alpha_beta(main_player, player::Int64, position::Array{I
             end
 
             if ( alpha >= beta )
-                println("Cut-off")
 
                 break
             end
@@ -148,9 +124,7 @@ function minimax_search_alpha_beta(main_player, player::Int64, position::Array{I
     pvs_moves = pvs_moves[2:end]
 
     if depth == 0
-        # println("Played Moves at Terminal Node", played_moves)
         score = evaluation_function(board, played_moves, player_positions, main_player)
-        # println("Reached End Node!! Score: ", score)
         n_eval = n_eval + 1
 
         pop!(played_moves)
@@ -163,7 +137,6 @@ function minimax_search_alpha_beta(main_player, player::Int64, position::Array{I
         score = -99999.0
         node_moves = possible_moves(board, played_moves)
         if size(pvs_moves)[1] > 0
-            println("PVS Enabled")
             if pvs_moves[1] in node_moves
                 value, n_eval, played_moves = minimax_search_alpha_beta(main_player, player, child, depth - 1, false, alpha, beta, played_moves, player_positions, board, n_eval, pvs_moves)
                 if (value > score)
@@ -179,9 +152,6 @@ function minimax_search_alpha_beta(main_player, player::Int64, position::Array{I
         end
 
         for child in node_moves
-
-       
-            # println("Children Moves for MAX: ", child)
 
             value, n_eval, played_moves = minimax_search_alpha_beta(main_player, player, child, depth - 1, false, alpha, beta, played_moves, player_positions, board, n_eval, pvs_moves)
             if (value > score)
@@ -203,11 +173,7 @@ function minimax_search_alpha_beta(main_player, player::Int64, position::Array{I
         score = 99999.0
         node_moves = possible_moves(board, played_moves)
          
-        if player == 22
-            opponent = 11
-        else
-            opponent = 22
-        end
+        opponent = get_opponent(player)
 
         if size(pvs_moves)[1] > 0
 
@@ -226,9 +192,6 @@ function minimax_search_alpha_beta(main_player, player::Int64, position::Array{I
         end    
 
         for child in node_moves
-
-   
-            # println("Children Moves for MIN: ", child)
             
             value, n_eval, played_moves = minimax_search_alpha_beta(main_player, opponent, child, depth - 1, true, alpha, beta, played_moves, player_positions, board, n_eval, pvs_moves)
             if (value < score)
@@ -282,9 +245,7 @@ function minimax_search_alpha_beta(main_player, player::Int64, position::Array{I
     end
 
     if depth == 0
-        # println("Played Moves at Terminal Node", played_moves)
         score = evaluation_function(board, played_moves, player_positions, main_player)
-        # println("Reached End Node!! Score: ", score)
         n_eval = n_eval + 1
 
         pop!(played_moves)
@@ -297,10 +258,6 @@ function minimax_search_alpha_beta(main_player, player::Int64, position::Array{I
         score = -99999.0
         node_moves = possible_moves(board, played_moves)
         for child in node_moves
-
-       
-            # println("Children Moves for MAX: ", child)
-
             value, n_eval, played_moves = minimax_search_alpha_beta(main_player, player, child, depth - 1, false, alpha, beta, played_moves, player_positions, board, n_eval, hash)
             if (value > score)
                 score = value
@@ -321,17 +278,10 @@ function minimax_search_alpha_beta(main_player, player::Int64, position::Array{I
         score = 99999.0
         node_moves = possible_moves(board, played_moves)
          
-        if player == 22
-            opponent = 11
-        else
-            opponent = 22
-        end
+        opponent = get_opponent(player)
  
 
         for child in node_moves
-
-   
-            # println("Children Moves for MIN: ", child)
             
             value, n_eval, played_moves = minimax_search_alpha_beta(main_player, opponent, child, depth - 1, true, alpha, beta, played_moves, player_positions, board, n_eval, hash)
             if (value < score)

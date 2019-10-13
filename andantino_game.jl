@@ -7,7 +7,6 @@ include("transposition_tables.jl")
 
 
 ZobristTable = initTable()
-debug = false
 andantino_board = create_board()
 original_board = deepcopy(andantino_board)
 move_count = 0
@@ -28,7 +27,7 @@ function runAIvsAI()
     else
       move = play_turn(22, search_ply)
     end
-    
+
     move_count = move_count + 1
 
     if move_count > 4 && check_game_end(move, andantino_board)
@@ -58,10 +57,6 @@ function runAIvsAI()
     end
 
     render_body("none")
-
-    if debug
-      prettyprintboard(andantino_board)
-    end
 
   end
 

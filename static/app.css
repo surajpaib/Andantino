@@ -34,7 +34,9 @@ button {
   }
 
 button:hover {
-    background-color: #dcdcdc; /* Green */
+    transform: translateY(4px);
+    transform: scale(1.2, 1.2);
+
 }
 
 .hex-buttons{
