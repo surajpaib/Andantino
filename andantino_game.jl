@@ -4,15 +4,17 @@ include("utils.jl")
 include("win_conditions.jl")
 include("ui_render.jl")
 include("transposition_tables.jl")
+include("performance_analysis.jl")
 
 
 ZobristTable = initTable()
 andantino_board = create_board()
 original_board = deepcopy(andantino_board)
+alphabeta = false
 move_count = 0
 pvs = false
 iterativedeepening = false
-
+performance_table = create_performance_table()
 function runAIvsAI()
   while true
   
@@ -24,14 +26,21 @@ function runAIvsAI()
     elseif pvs
       move = play_turn(22, search_ply, 3)
 
+    elseif alphabeta
+      move = play_turn(22, search_ply, -Inf, Inf)
     else
       move = play_turn(22, search_ply)
+
     end
 
     move_count = move_count + 1
+    CSV.write("performance_table.csv", performance_table)
 
     if move_count > 4 && check_game_end(move, andantino_board)
       render_win_page("WHITE")
+      CSV.write("performance_table.csv", performance_table)
+      global performance_table = create_performance_table()
+
       global andantino_board = create_board()
       global move_count = 0
       return
@@ -44,12 +53,19 @@ function runAIvsAI()
     elseif pvs
       move = play_turn(11, search_ply, 3)
 
+    elseif alphabeta
+      move = play_turn(11, search_ply, -Inf, Inf)
+
     else
       move = play_turn(11, search_ply)
     end 
+    CSV.write("performance_table.csv", performance_table)
 
     if move_count > 3 && check_game_end(move, andantino_board)
+      CSV.write("performance_table.csv", performance_table)
       render_win_page("BLACK")
+      global performance_table = create_performance_table()
+
       global andantino_board = create_board()
       global move_count = 0
 
@@ -95,10 +111,17 @@ function play_handler(turn::String, search_ply::Int64, arg)
       end
 
       if iterativedeepening
+        hash = computeHash(ZobristTable, andantino_board)
+        move = play_turn(opponent, search_ply, 3, hash)
+  
+      elseif pvs
         move = play_turn(opponent, search_ply, 3)
   
+      elseif alphabeta
+        move = play_turn(opponent, search_ply, -Inf, Inf)
       else
         move = play_turn(opponent, search_ply)
+  
       end
       
       if move_count > 3 && check_game_end(move, andantino_board)

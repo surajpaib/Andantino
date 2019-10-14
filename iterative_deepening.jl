@@ -1,7 +1,4 @@
 function iterative_deeping(ply, player, moves_to_play, hash::Int64)
-    println("Hash: ", hash)
-
-    println("Depth Searched: ", ply)
     move_scores = Float64[]
     n_evaluations = 0
     for move in moves_to_play
@@ -12,12 +9,11 @@ function iterative_deeping(ply, player, moves_to_play, hash::Int64)
     end
     best_move = findmax(move_scores)[2]
     move = moves_to_play[best_move] 
-    return move
+    return move, n_evaluations
 end
 
 
 function iterative_deeping(ply, player, moves_to_play)
-    println("Depth Searched: ", ply)
     move_scores = Float64[]
     pvs_moves = Array{Array{Int64, 1}, 1}[]
     n_evaluations = 0
@@ -32,12 +28,11 @@ function iterative_deeping(ply, player, moves_to_play)
     best_move = findmax(move_scores)[2]
     pvs_move = pvs_moves[best_move]
     move = moves_to_play[best_move] 
-    return move, pvs_move
+    return move, pvs_move, n_evaluations
 end
 
 # Iterative Deepening with PVS 
 function iterative_deeping(ply, player, moves_to_play, pvs_move)
-    println("Depth Searched: ", ply)
     move_scores = Float64[]
     pvs_moves = Array{Array{Int64, 1}, 1}[]
     n_evaluations = 0
@@ -52,5 +47,5 @@ function iterative_deeping(ply, player, moves_to_play, pvs_move)
     best_move = findmax(move_scores)[2]
     pvs_move = pvs_moves[best_move]
     move = moves_to_play[best_move] 
-    return move, pvs_move
+    return move, pvs_move, n_evaluations
 end

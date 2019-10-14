@@ -33,9 +33,12 @@ function render_page(message)
     </div>
 
     <br/><br/>
-
+    <label class="container">Alpha Beta Search
+    <input type="checkbox" id="alphabeta">
+    <span class="checkmark"></span>
+    </label><br/>
     <label class="container">Transposition Tables
-    <input type="checkbox" id="iterativedeep" che>
+    <input type="checkbox" id="iterativedeep">
     <span class="checkmark"></span>
     </label><br/>
     <label class="container">PVS
@@ -63,7 +66,9 @@ function render_page(message)
     var search_ply = document.getElementById("search_ply");
     var iterativedeepval = document.getElementById("iterativedeep").checked;
     var pvsval = document.getElementById("pvs").checked;
-    Blink.msg("start", [game_mode, search_ply.value, iterativedeepval, pvsval]);
+    var alphabeta = document.getElementById("alphabeta").checked;
+
+    Blink.msg("start", [game_mode, search_ply.value, iterativedeepval, pvsval, alphabeta]);
   }
 
 
@@ -100,18 +105,38 @@ function render_body(turn)
   
       var undo_button = document.createElement("button");
       undo_button.innerHTML = "UNDO";
+
+ 
   
       undo_button.setAttribute('id', 'undo');
       undo_button.setAttribute('onclick', 'Blink.msg("undo", "$turn")');
   
       container.style.margin = '15px 0';
       container.appendChild(undo_button);
+
   
-  
+      var rowmappings = document.createElement("div");
+      for (var i=0; i <10; i++){
+
+        var mappings = document.createElement("span");
+        mappings.setAttribute('class', 'toprow');
+        mappings.innerHTML = String.fromCharCode(65+i);
+        rowmappings.appendChild(mappings);
+      }
+      rowmappings.setAttribute('style', 'text-align:center');
+
+      container.appendChild(rowmappings);
       for (var j=1; j<20; j++){
       var rowdiv = document.createElement("div");
+      var mappings = document.createElement("span");
           if (j<=10){
-            for (var i = 1; i <= 10 + j - 1; i++) {
+
+            mappings.innerHTML = j + "  ";
+            mappings.setAttribute('class', 'inlinerow');
+
+            rowdiv.appendChild(mappings);
+
+          for (var i = 1; i <= 10 + j - 1; i++) {
           var btn = document.createElement("button");
           btn.innerHTML = "&#x2B21;";
           btn.setAttribute('class', 'hex-buttons');
@@ -120,7 +145,18 @@ function render_body(turn)
           btn.setAttribute('onclick', 'Blink.msg("$turn","'+ String(j) + ',' + String(i) + '")');
           rowdiv.appendChild(btn);
         }
+        var mappings = document.createElement("span");
+        mappings.setAttribute('class', 'inlinerow');
+
+        mappings.innerHTML = " " + String.fromCharCode(75+j);
+        rowdiv.appendChild(mappings);
         }else{
+
+          mappings.innerHTML = j;
+          mappings.setAttribute('class', 'inlinerow');
+          rowdiv.appendChild(mappings);
+
+
           for (var i = 1; i <= 29 - j; i++) {
           var btn = document.createElement("button");
           btn.innerHTML = "&#x2B21;";
@@ -130,13 +166,16 @@ function render_body(turn)
           btn.setAttribute('onclick', 'Blink.msg("$turn","'+ String(j) + ',' + String(i) + '")');
           rowdiv.appendChild(btn);
         }
+        var mappings = document.createElement("span");
+        mappings.innerHTML = ' ';
+        rowdiv.appendChild(mappings);
         }
     
         rowdiv.setAttribute('style', 'text-align:center');
         container.appendChild(rowdiv);
-        document.body.appendChild(container);
       }
-  
+      document.body.appendChild(container);
+
         white_positions.forEach(function(element) {
         var added_piece = document.getElementById(String(element[0])+","+String(element[1]));
         added_piece.innerHTML = "&#x2B22;";
@@ -152,10 +191,26 @@ function render_body(turn)
         added_piece.removeAttribute('onclick');
         });
 
+
+        playable_move_count = 1;
         playable_moves.forEach(function(element) {
           var added_piece = document.getElementById(String(element[0])+","+String(element[1]));
           added_piece.innerHTML = "&#x2B21;";
+     
+          added_piece.style.setProperty('animation-name', 'increasesize');
+          added_piece.style.setProperty('animation-duration', playable_move_count * 0.5 + 's');
+          added_piece.style.setProperty('animation-direction', 'alternate');
+          added_piece.style.setProperty('animation-iteration-count', 'infinite');
+
+          added_piece.setAttribute('class', 'hex-buttons playablebuttons');
+          
+          added_piece.setAttribute('class', 'hex-buttons playablebuttons');
+        
           added_piece.style.color = '#00B3CE';
+          if (playable_move_count == 5){
+            playable_move_count = 0;
+          }
+          playable_move_count++;
           });
       
     })();
@@ -178,6 +233,7 @@ handle(w, "start") do arg
     println(arg)
     global iterativedeepening = arg[3]
     global pvs = arg[4]
+    global alphabeta= arg[5]
     global search_ply = parse(Int, arg[2])
     if arg[1] == "white"
       play_turn(11, [10, 10])
