@@ -6,7 +6,6 @@ include("ui_render.jl")
 include("transposition_tables.jl")
 include("performance_analysis.jl")
 
-
 ZobristTable = initTable()
 andantino_board = create_board()
 original_board = deepcopy(andantino_board)
@@ -44,6 +43,10 @@ function runAIvsAI()
       global andantino_board = create_board()
       global move_count = 0
       return
+    end
+
+    if move_count > 15
+      global search_ply = 3
     end
 
     if iterativedeepening

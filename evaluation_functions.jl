@@ -8,6 +8,16 @@ function evaluation_function(board::Array{Array{Int64, 1}}, played_moves::Array{
 end
 
 
+function evaluation_function(board::Array{Array{Int64, 1}}, played_moves::Array{Array{Int64, 1}}, move::Array{Int64, 1}, player_positions::Array{Int64, 1}, current_player::Int64, player::Int64)
+    push!(played_moves, move)
+    push!(player_positions, current_player)
+    eval_board = evaluate_board(board, played_moves, player_positions)
+    opponent = get_opponent(player)
+    score = evaluate_five_in_row(eval_board, player, played_moves, player_positions) - evaluate_five_in_row(eval_board, opponent, played_moves, player_positions)
+    return score
+end
+
+
 function conv_kernel_evaluation(board::Array{Array{Int64, 1}}, played_moves::Array{Array{Int64, 1}}, player_positions::Array{Int64, 1}, player::Int64)
     eval_board = evaluate_board(board, played_moves, player_positions)
     opponent = get_opponent(player)

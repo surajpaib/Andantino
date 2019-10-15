@@ -92,15 +92,20 @@ function play_turn(player::Int64, max_search_ply::Int64, iterative_deeping_time:
     move = Int64[]
 
     for ply in 1:max_search_ply
+        println("Searching Ply: ", ply)
         if ply == 1 || ~(pvs)
             return_vals, id_time, bytes_alloc, _, _ = @timed iterative_deeping(ply, player, moves_to_play, hash)
+            move = return_vals[1]
+            n_evaluations = n_evaluations + return_vals[2]
         else
             return_vals, id_time, bytes_alloc, _, _ = @timed iterative_deeping(ply, player, moves_to_play, pvs_move, hash)
+            move = return_vals[1]
+            pvs_move = return_vals[2]
+            n_evaluations = n_evaluations + return_vals[3]
         end
-        move = return_vals[1]
-        pvs_move = return_vals[2]
-        n_evaluations = n_evaluations + return_vals[3]
         total_time = total_time + id_time
+        println("Total Time: ", total_time)
+
         total_bytes_alloc = total_bytes_alloc + bytes_alloc
 
         if total_time > iterative_deeping_time
