@@ -261,7 +261,7 @@ function minimax_search_alpha_beta(main_player, player::Int64, position::Array{I
 
 
         # Sorting Nodes Before Expanding the tree
-        sort!(node_moves, by= x -> evaluation_function(board, played_moves, x, player_positions, opponent, main_player), rev=true)
+        # sort!(node_moves, by= x -> evaluation_function(board, played_moves, x, player_positions, opponent, main_player), rev=true)
 
         for child in node_moves
             value, n_eval, played_moves = minimax_search_alpha_beta(main_player, opponent, child, depth - 1, false, alpha, beta, played_moves, player_positions, board, n_eval, hash)
@@ -287,7 +287,7 @@ function minimax_search_alpha_beta(main_player, player::Int64, position::Array{I
 
         # Sorting Nodes Before Expanding the tree
 
-        sort!(node_moves, by= x -> evaluation_function(board, played_moves, x, player_positions, opponent, main_player))
+        # sort!(node_moves, by= x -> evaluation_function(board, played_moves, x, player_positions, opponent, main_player))
 
         for child in node_moves
             
