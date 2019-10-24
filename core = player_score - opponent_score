@@ -1,0 +1,101 @@
+[33mcommit b0de600f4fdd0603fb864b226221478b1a1f9c22[m[33m ([m[1;36mHEAD -> [m[1;32mparallel[m[33m)[m
+Author: Suraj Pai <surajballambat@gmail.com>
+Date:   Thu Oct 24 21:57:39 2019 +0200
+
+    Working Evaluation Function
+
+[33mcommit 11bab718f62292cdc47569c57c16d2d31a6e3625[m
+Author: Suraj Pai <surajballambat@gmail.com>
+Date:   Thu Oct 24 21:05:24 2019 +0200
+
+    Fix eval fn
+
+[33mcommit e84e9f1e0ae570db9683a5ee0fbd1d00dde3c332[m
+Author: Suraj Pai <surajballambat@gmail.com>
+Date:   Wed Oct 23 19:17:41 2019 +0200
+
+    Added parallel threads
+
+[33mcommit 454a438b24fd116565d4f61fc011cd6781de0428[m[33m ([m[1;31morigin/master[m[33m, [m[1;32mmaster[m[33m)[m
+Author: Suraj Pai <surajballambat@gmail.com>
+Date:   Wed Oct 16 01:32:30 2019 +0200
+
+    Fixed Alpha-Beta inconsistencies
+
+[33mcommit 2f92fc92b3ff654a694481d8a57945fb67d73e91[m
+Author: Suraj Pai <surajballambat@gmail.com>
+Date:   Tue Oct 15 01:47:01 2019 +0200
+
+    Added board numbering and animations
+
+[33mcommit db7cc0baaab8ac6b268b207e9caa1236eea94753[m
+Author: Suraj Pai <surajballambat@gmail.com>
+Date:   Sun Oct 13 20:03:17 2019 +0200
+
+    Updated UI and cleaned up code
+
+[33mcommit caa53020e6377007b80d3ce0670d605a13c4f81a[m
+Author: Suraj Pai <surajballambat@gmail.com>
+Date:   Sun Oct 13 01:56:38 2019 +0200
+
+    Fixed Evaluation Function
+
+[33mcommit 425c078bf9cdf26c2b702a1be2175988c4dd01e0[m
+Author: Suraj Pai <surajballambat@gmail.com>
+Date:   Tue Oct 8 21:57:35 2019 +0200
+
+    Added Transposition Tables
+
+[33mcommit fd077e94123b2d38abf51a9f8352ed955d099a4c[m
+Author: Suraj Pai <surajballambat@gmail.com>
+Date:   Tue Oct 8 18:35:47 2019 +0200
+
+    Revamped UI for Andantino with UI Logs
+
+[33mcommit 58fbb1af50bc7af16bcf0fcc4fff1748b3b43e3c[m
+Author: Suraj Pai <surajballambat@gmail.com>
+Date:   Fri Oct 4 17:00:23 2019 +0200
+
+    Added Flood Fill edge case fix
+
+[33mcommit 928812d590db1a4fce5c69f9a18944f962eda033[m
+Author: Suraj Pai <surajballambat@gmail.com>
+Date:   Thu Oct 3 21:04:36 2019 +0200
+
+    Added PVS Search
+
+[33mcommit 277dd524c5bbf3971cf7ac3b17e3bddd72c20ff4[m
+Author: Suraj Pai <surajballambat@gmail.com>
+Date:   Fri Sep 27 05:26:57 2019 +0200
+
+    Added 5 in a row eval function and updated AB search
+
+[33mcommit 425d29362c9a68ef45b52b1cae954cf465f594b4[m
+Author: Suraj Pai <surajballambat@gmail.com>
+Date:   Mon Sep 23 21:27:31 2019 +0200
+
+    Added AB and MiniMax Search
+
+[33mcommit 77f2c3e2e87918d051c1f12fc46af97c01cf26f4[m
+Author: Suraj Pai <surajballambat@gmail.com>
+Date:   Tue Sep 17 14:49:58 2019 +0200
+
+    Added Undo move
+
+[33mcommit ab262d0ddfef02572a401c225bdca823af0a93d1[m
+Author: Suraj Pai <surajballambat@gmail.com>
+Date:   Tue Sep 17 01:39:44 2019 +0200
+
+    Update Readme
+
+[33mcommit d78ffc4aad493b4997853879f88e412211e4db1e[m
+Author: Suraj Pai <surajballambat@gmail.com>
+Date:   Tue Sep 17 01:32:37 2019 +0200
+
+    Legacy files cleanup
+
+[33mcommit 606be80a3d0e901f1d897499ef9db0c4d24bc862[m
+Author: Suraj Pai <surajballambat@gmail.com>
+Date:   Tue Sep 17 01:32:02 2019 +0200
+
+    Added complete gameplay with win conditions and valid moves

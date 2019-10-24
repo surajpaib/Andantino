@@ -3,7 +3,9 @@ include("board_functions.jl")
 function evaluation_function(board::Array{Array{Int64, 1}}, played_moves::Array{Array{Int64, 1}}, player_positions::Array{Int64, 1}, player::Int64)
     eval_board = evaluate_board(board, played_moves, player_positions)
     opponent = get_opponent(player)
-    score = evaluate_five_in_row(eval_board, player, played_moves, player_positions)  -   evaluate_five_in_row(eval_board, opponent, played_moves, player_positions) 
+    player_score =  evaluate_five_in_row(eval_board, player, played_moves, player_positions) 
+    opponent_score = evaluate_five_in_row(eval_board, opponent, played_moves, player_positions) 
+    score = player_score - opponent_score   
     return score
 end
 
@@ -36,8 +38,6 @@ function evaluate_five_in_row(board::Array{Array{Int64, 1}}, player::Int64, play
     factor = 1
     scores = []
     for i in 1:size(occupied_hexagons)[1]
-
-
         # for (n, move) in enumerate(played_moves)
         #     if occupied_hexagons[i] == move
         #         factor = size(played_moves)[1] - n + 1
@@ -48,11 +48,14 @@ function evaluate_five_in_row(board::Array{Array{Int64, 1}}, player::Int64, play
 
         for index in 1:6
             if board[occupied_hexagons[i][1]][occupied_hexagons[i][2]] == player
-                count, op_count = check_next_hexagons(occupied_hexagons[i], board, index, 0, 0,  player)
-                alt_count, alt_op_count = check_next_hexagons(occupied_hexagons[i], board, move_map[index], 0, 0,  player)
+                count, op_count = check_next_hexagons(occupied_hexagons[i], board, index, 0, 0,  player, played_moves) 
+                alt_count, alt_op_count = check_next_hexagons(occupied_hexagons[i], board, move_map[index], 0, 0,  player, played_moves)
 
-                score = exp((count + alt_count)/2)
+                score = exp((count + alt_count)/2) * factor
+
+                op_count = op_count + alt_op_count
                 if op_count == 2
+                    # println("\n Two opponents for: ", occupied_hexagons[i])
                     score = 0.0
                 end
 
@@ -61,16 +64,16 @@ function evaluate_five_in_row(board::Array{Array{Int64, 1}}, player::Int64, play
         end
     end
 
-    # white_positions = []
-    # black_positions = []
-    # for hex in occupied_hexagons
-    #     if board[hex[1]][hex[2]] == 11
-    #       push!(black_positions, hex)
+    white_positions = []
+    black_positions = []
+    for hex in occupied_hexagons
+        if board[hex[1]][hex[2]] == 11
+          push!(black_positions, hex)
         
-    #     elseif board[hex[1]][hex[2]] == 22
-    #       push!(white_positions, hex)
-    #     end
-    #   end
+        elseif board[hex[1]][hex[2]] == 22
+          push!(white_positions, hex)
+        end
+      end
       
 
     # body!(w, """<script>
@@ -136,26 +139,24 @@ function evaluate_five_in_row(board::Array{Array{Int64, 1}}, player::Int64, play
                     
                 
     #         </script>""");
-    println("\n Maximum Score: ", maximum(scores), " Player:", player)
+    # println("\n Maximum Score: ", maximum(scores), " Player:", player)
     # readline()
     return maximum(scores)
 end
 
 
-function check_next_hexagons(last_hexagon::Array{Int64, 1}, board::Array{Array{Int64, 1}}, index::Int64, count, op_count, player)
+function check_next_hexagons(last_hexagon::Array{Int64, 1}, board::Array{Array{Int64, 1}}, index::Int64, count, op_count, player, played_moves)
     adjacent_hex = find_adjacent_hexagons(last_hexagon)
-
-
 
     if check_board_limits(adjacent_hex[index])
         if board[adjacent_hex[index][1]][adjacent_hex[index][2]] == player
             count = count + 1
             if count == 4
-                return Inf, op_count
+                return 50, op_count
             end
-            return check_next_hexagons(adjacent_hex[index], board, index, count, op_count, player)
+            return check_next_hexagons(adjacent_hex[index], board, index, count, op_count, player, played_moves)
 
-        elseif board[adjacent_hex[index][1]][adjacent_hex[index][2]] == get_opponent(player)
+        elseif board[adjacent_hex[index][1]][adjacent_hex[index][2]] == get_opponent(player) && ~(adjacent_hex[index] in played_moves)
             op_count = op_count + 1
             return count, op_count
         end
