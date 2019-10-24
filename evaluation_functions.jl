@@ -48,7 +48,14 @@ function evaluate_five_in_row(board::Array{Array{Int64, 1}}, player::Int64, play
 
         for index in 1:6
             if board[occupied_hexagons[i][1]][occupied_hexagons[i][2]] == player
-                score = exp(check_next_hexagons(occupied_hexagons[i], board, index, 0, 0,  player)) * factor
+                count, op_count = check_next_hexagons(occupied_hexagons[i], board, index, 0, 0,  player)
+                alt_count, alt_op_count = check_next_hexagons(occupied_hexagons[i], board, move_map[index], 0, 0,  player)
+
+                score = exp((count + alt_count)/2)
+                if op_count == 2
+                    score = 0.0
+                end
+
                 push!(scores, score)
             end
         end
@@ -129,7 +136,7 @@ function evaluate_five_in_row(board::Array{Array{Int64, 1}}, player::Int64, play
                     
                 
     #         </script>""");
-    # println("\n Maximum Score: ", maximum(scores))
+    println("\n Maximum Score: ", maximum(scores), " Player:", player)
     # readline()
     return maximum(scores)
 end
@@ -144,36 +151,19 @@ function check_next_hexagons(last_hexagon::Array{Int64, 1}, board::Array{Array{I
         if board[adjacent_hex[index][1]][adjacent_hex[index][2]] == player
             count = count + 1
             if count == 4
-                return Inf
+                return Inf, op_count
             end
             return check_next_hexagons(adjacent_hex[index], board, index, count, op_count, player)
 
         elseif board[adjacent_hex[index][1]][adjacent_hex[index][2]] == get_opponent(player)
             op_count = op_count + 1
-            current_hex = deepcopy(last_hexagon)
-            if op_count == 1
-                comp_index = move_map[index]
-                while true
-                    adjacent_hex = find_adjacent_hexagons(current_hex)
-                    if adjacent_hex[comp_index] == player
-                        current_hex = adjacent_hex[comp_index]
-                    elseif adjacent_hex[comp_index] == get_opponent(player)
-                        println("2 opponents found")
-                        return -Inf
-                    else
-                        return count
-                    end
-                    
-                end
-            else
-                return count
-            end
-        else
-            return count
+            return count, op_count
         end
-    else
-        return count
+
     end
+    
+    return count, op_count
+    
 
 end
 
