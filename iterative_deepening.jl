@@ -31,7 +31,7 @@ function iterative_deeping(ply, player, moves_to_play)
 
     pvs_moves = Array{Array{Int64, 1}, 1}(number_of_moves)
 
-    @threads for i in 1:number_of_moves
+     for i in 1:number_of_moves
 
         played_moves = Array{Int64,1}[]
         move_values = Int64[]

@@ -1,5 +1,15 @@
 # Independent FUnctions related to evaluating the board
 
+move_map = Dict(
+    1 => 2,
+    3 => 4,
+    5 => 6,
+    2 => 1,
+    4 => 3,
+    6 => 5 
+)
+
+
 function create_board()
     upper_board = Array{Int64,1}[[-1 for i in 1:(10+j)] for j in 0:9]
     lower_board =  Array{Int64,1}[[-1 for i in 1:(18-j)] for j in 0:8]
@@ -36,11 +46,12 @@ function check_flood_fill_edge_case(board::Array{Array{Int64, 1}}, player::Int64
         for (j, hexagon) in enumerate(row)
             if hexagon == player
                 flood_fill_algorithm([i,1], board, player)
-                return evaluate_board(board, player)
+                flood_fill_algorithm([1,j], board, player)
+
             end
         end
     end
-    return false
+    return evaluate_board(board, player)
 end
 
 

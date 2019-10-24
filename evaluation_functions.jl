@@ -3,7 +3,7 @@ include("board_functions.jl")
 function evaluation_function(board::Array{Array{Int64, 1}}, played_moves::Array{Array{Int64, 1}}, player_positions::Array{Int64, 1}, player::Int64)
     eval_board = evaluate_board(board, played_moves, player_positions)
     opponent = get_opponent(player)
-    score = evaluate_five_in_row(eval_board, player, played_moves, player_positions)  -   evaluate_five_in_row(eval_board, opponent, played_moves, player_positions) - 1
+    score = evaluate_five_in_row(eval_board, player, played_moves, player_positions)  -   evaluate_five_in_row(eval_board, opponent, played_moves, player_positions) 
     return score
 end
 
@@ -150,8 +150,21 @@ function check_next_hexagons(last_hexagon::Array{Int64, 1}, board::Array{Array{I
 
         elseif board[adjacent_hex[index][1]][adjacent_hex[index][2]] == get_opponent(player)
             op_count = op_count + 1
-            if op_count == 2
-                return -Inf
+            current_hex = deepcopy(last_hexagon)
+            if op_count == 1
+                comp_index = move_map[index]
+                while true
+                    adjacent_hex = find_adjacent_hexagons(current_hex)
+                    if adjacent_hex[comp_index] == player
+                        current_hex = adjacent_hex[comp_index]
+                    elseif adjacent_hex[comp_index] == get_opponent(player)
+                        println("2 opponents found")
+                        return -Inf
+                    else
+                        return count
+                    end
+                    
+                end
             else
                 return count
             end

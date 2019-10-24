@@ -234,9 +234,9 @@ function minimax_search_alpha_beta(main_player, player::Int64, position::Array{I
     if length(entry) > 0 && entry["depth"] >= depth
         if entry["flag"] == "EXACT"
             return entry["value"], n_eval, played_moves
-        elseif entry["flag"] == "UB"
-            alpha = max(alpha, entry["value"])
         elseif entry["flag"] == "LB"
+            alpha = max(alpha, entry["value"])
+        elseif entry["flag"] == "UB"
             beta = min(beta, entry["value"])
         end
 
