@@ -148,7 +148,7 @@ function render_body(turn)
         var mappings = document.createElement("span");
         mappings.setAttribute('class', 'inlinerow');
 
-        mappings.innerHTML = " " + String.fromCharCode(75+j);
+        mappings.innerHTML = " " + String.fromCharCode(74+j);
         rowdiv.appendChild(mappings);
         }else{
 

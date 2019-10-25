@@ -31,8 +31,6 @@ function evaluate_surrounding(board::Array{Array{Int64, 1}}, player::Int64, play
 end
 
 
-# function moore_tracing_algorithm()
-
 function evaluate_five_in_row(board::Array{Array{Int64, 1}}, player::Int64, played_moves::Array{Array{Int64, 1}}, player_positions)
     occupied_hexagons = evaluate_board(board)
     factor = 1
@@ -40,21 +38,10 @@ function evaluate_five_in_row(board::Array{Array{Int64, 1}}, player::Int64, play
 
     hexagon_groups = []
     for i in 1:size(occupied_hexagons)[1]
-
-
-        # for (n, move) in enumerate(played_moves)
-        #     if occupied_hexagons[i] == move
-        #         factor = size(played_moves)[1] - n + 1
-        #     else
-        #         factor = 1
-        #     end
-        # end
-
         for index in 1:6
             if board[occupied_hexagons[i][1]][occupied_hexagons[i][2]] == player
                 
                 group = check_next_hexagons(occupied_hexagons[i], board, index, player, Array{Int64,1}[occupied_hexagons[i]])
-                # sort!(group)
                 push!(hexagon_groups, group)
             end
         end
@@ -63,9 +50,7 @@ function evaluate_five_in_row(board::Array{Array{Int64, 1}}, player::Int64, play
 
     unique!(hexagon_groups)
     max_size = maximum([size(group)[1] for group in hexagon_groups])
-    # println("Max Size: ", max_size)
     filter!(x-> size(x)[1]==max_size, hexagon_groups)
-    # println("Top Groups: ", hexagon_groups)
 
     final_score = []
     for moves in hexagon_groups
@@ -88,12 +73,12 @@ function evaluate_five_in_row(board::Array{Array{Int64, 1}}, player::Int64, play
             end
 
             if op_count == 2
-                continue
+                score = 0.0
             else
                 if size(moves)[1] == 5
-                    score = 1000
+                    score = 100
                 else
-                    score = size(moves)[1]
+                    score = size(moves)[1] * 2
                 end
 
             end
@@ -102,87 +87,18 @@ function evaluate_five_in_row(board::Array{Array{Int64, 1}}, player::Int64, play
         push!(final_score, exp(score))
     end
 
-    
 
+    for i in 1:size(hexagon_groups)[1]
+        hexagon_groups[i] = sort(hexagon_groups[i])
+    end
 
-    # white_positions = []
-    # black_positions = []
-    # for hex in occupied_hexagons
-    #     if board[hex[1]][hex[2]] == 11
-    #       push!(black_positions, hex)
-        
-    #     elseif board[hex[1]][hex[2]] == 22
-    #       push!(white_positions, hex)
-    #     end
-    #   end
-      
+    indexes = unique(i -> hexagon_groups[i], 1:length(hexagon_groups))
+    total_score = 0
+    for index in indexes
+        total_score += final_score[index]
+    end
 
-    # body!(w, """<script>
-    # var white_positions = eval('$white_positions'.replace('Any', ''));
-    # var black_positions = eval('$black_positions'.replace('Any', ''));
-    #                 (function printBtn() {
-    #                 var container = document.createElement("div");
-
-    #                 var undo_button = document.createElement("button");
-    #                 undo_button.innerHTML = "UNDO";
-                
-    #                 undo_button.setAttribute('id', 'undo');
-    #                 undo_button.setAttribute('onclick', 'Blink.msg("undo","white")');
-
-    #                 container.style.margin = '15px 0';
-    #                 container.appendChild(undo_button);
-
-    #                 for (var j=1; j<20; j++){
-    #                 var rowdiv = document.createElement("div");
-    #                     if (j<=10){
-    #                         for (var i = 1; i <= 10 + j - 1; i++) {
-    #                     var btn = document.createElement("button");
-    #                     btn.innerHTML = "&#x2B21;";
-    #                     btn.setAttribute('class', 'hex-buttons');
-                    
-    #                     btn.setAttribute('id', String(j) + ',' + String(i));
-    #                     btn.setAttribute('onclick', 'Blink.msg("white","'+ String(j) + ',' + String(i) + '")');
-    #                     rowdiv.appendChild(btn);
-    #                     }
-    #                     }else{
-    #                     for (var i = 1; i <= 29 - j; i++) {
-    #                     var btn = document.createElement("button");
-    #                     btn.innerHTML = "&#x2B21;";
-    #                     btn.setAttribute('class', 'hex-buttons');
-
-    #                     btn.setAttribute('id', String(j) + ',' + String(i));
-    #                     btn.setAttribute('onclick', 'Blink.msg("white","'+ String(j) + ',' + String(i) + '")');
-    #                     rowdiv.appendChild(btn);
-    #                     }
-    #                     }
-                    
-    #                     rowdiv.setAttribute('style', 'text-align:center');
-    #                     container.appendChild(rowdiv);
-    #                     document.body.appendChild(container);
-    #                 }
-                    
-    #                 })();
-
-    #                 white_positions.forEach(function(element) {
-    #                     var added_piece = document.getElementById(String(element[0])+","+String(element[1]));
-    #                     added_piece.innerHTML = "&#x2B22;";
-    #                     added_piece.style.color = '#ffffff';
-    #                     added_piece.removeAttribute('onclick');
-    #                 });
-
-
-    #             black_positions.forEach(function(element) {
-    #                     var added_piece = document.getElementById(String(element[0])+","+String(element[1]));
-    #                     added_piece.innerHTML = "&#x2B22;";
-    #                     added_piece.style.color = '#000000';
-    #                     added_piece.removeAttribute('onclick');
-    #                 });
-                    
-                
-    #         </script>""");
-    # println("\n Maximum Score: ", maximum(scores))
-    # readline()
-    return maximum(final_score)
+    return total_score
 end
 
 
