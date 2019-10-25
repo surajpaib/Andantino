@@ -46,7 +46,7 @@ function play_turn(player::Int64, search_ply::Int64, alpha, beta)
       
     end
     
-    print("Moves: ", moves_to_play, ", Move Scores: ", move_scores)
+    # print("Moves: ", moves_to_play, ", Move Scores: ", move_scores)
 
     time_taken = sum(total_time)
     evaluations = sum(n_evaluations)
@@ -128,6 +128,7 @@ function play_turn(player::Int64, max_search_ply::Int64, iterative_deeping_time:
             break
         end
     end
+    
     push!(performance_table, [total_time, total_bytes_alloc, n_evaluations, player])
 
 

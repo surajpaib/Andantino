@@ -15,7 +15,6 @@ function minimax_search(main_player, player::Int64, position::Array{Int64, 1}, d
         n_eval = n_eval + 1
         pop!(played_moves)
         pop!(player_positions)
-
         return score, n_eval, played_moves
     end
 
@@ -43,7 +42,6 @@ function minimax_search(main_player, player::Int64, position::Array{Int64, 1}, d
 
     pop!(played_moves)
     pop!(player_positions)
-
     return score, n_eval, played_moves
 end
 

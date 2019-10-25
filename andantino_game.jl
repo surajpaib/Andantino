@@ -16,6 +16,8 @@ move_count = 0
 pvs = false
 iterativedeepening = false
 performance_table = create_performance_table()
+current_time = time()
+
 
 
 # AI vs AI mode Play
@@ -38,11 +40,11 @@ function runAIvsAI()
       end
 
       move_count = move_count + 1
-      CSV.write("performance_table.csv", performance_table)
+      CSV.write("metrics/performance_table.csv", performance_table)
 
       if move_count > 4 && check_game_end(move, andantino_board)
         render_win_page("WHITE")
-        CSV.write("performance_table.csv", performance_table)
+        CSV.write("metrics/performance_table.csv", performance_table)
         global performance_table = create_performance_table()
 
         global andantino_board = create_board()
@@ -64,10 +66,10 @@ function runAIvsAI()
       else
         move = play_turn(11, search_ply)
       end 
-      CSV.write("performance_table.csv", performance_table)
+      CSV.write("metrics/performance_table.csv", performance_table)
 
       if move_count > 3 && check_game_end(move, andantino_board)
-        CSV.write("performance_table.csv", performance_table)
+        CSV.write("metrics/performance_table.csv", performance_table)
         render_win_page("BLACK")
         global performance_table = create_performance_table()
 
@@ -104,9 +106,11 @@ function play_handler(turn::String, search_ply::Int64, arg)
       end
 
       if play_turn(player, collect(eval(Meta.parse(arg))))
+        open("tmp_board.txt", "w") do f
+            write(f, string(andantino_board))
+        end
         move_count = move_count + 1
-
-        CSV.write("performance_table.csv", performance_table)
+        CSV.write("metrics/$current_time-$alphabeta-$search_ply-$iterativedeepening-$pvs.csv", performance_table)
 
         if move_count > 4 && check_game_end(collect(eval(Meta.parse(arg))), andantino_board)
           render_win_page(piece_map[player])

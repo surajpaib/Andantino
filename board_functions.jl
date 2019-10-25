@@ -1,6 +1,6 @@
 # Independent FUnctions related to evaluating the board
 
-move_map = Dict(
+map_move = Dict(
     1 => 2,
     3 => 4,
     5 => 6,
