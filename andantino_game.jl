@@ -110,9 +110,15 @@ function play_handler(turn::String, search_ply::Int64, arg)
             write(f, string(andantino_board))
         end
         move_count = move_count + 1
+
+        if move_count > 8
+          search_ply = 3
+        end
         CSV.write("metrics/$current_time-$alphabeta-$search_ply-$iterativedeepening-$pvs.csv", performance_table)
 
         if move_count > 4 && check_game_end(collect(eval(Meta.parse(arg))), andantino_board)
+          render_body(turn)
+          sleep(2)
           render_win_page(piece_map[player])
           global andantino_board = create_board()
           global move_count = 0
@@ -135,7 +141,8 @@ function play_handler(turn::String, search_ply::Int64, arg)
         end
         
         if move_count > 3 && check_game_end(move, andantino_board)
-
+          render_body(turn)
+          sleep(2)
           render_win_page(piece_map[opponent])
           global andantino_board = create_board()
           global move_count = 0

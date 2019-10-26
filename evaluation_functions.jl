@@ -1,14 +1,24 @@
 include("board_functions.jl")
+include("win_conditions.jl")
 
-function evaluation_function(board::Array{Array{Int64, 1}}, played_moves::Array{Array{Int64, 1}}, player_positions::Array{Int64, 1}, player::Int64)
+function evaluation_function(board::Array{Array{Int64, 1}}, played_moves::Array{Array{Int64, 1}}, player_positions::Array{Int64, 1}, player::Int64, current_player::Int64)
+    if current_player == player
+        if check_first_move(board, played_moves[1], player_positions[1])
+            return Inf
+        end
+    end
     eval_board = evaluate_board(board, played_moves, player_positions)
     opponent = get_opponent(player)
-    score = evaluate_five_in_row(eval_board, player, played_moves, player_positions) - evaluate_five_in_row(eval_board, opponent, played_moves, player_positions)
-    surrounding_score = evaluate_surrounding(eval_board, player, played_moves, player_positions) - evaluate_surrounding(eval_board, opponent, played_moves, player_positions)
+    score = evaluate_five_in_row(eval_board, player, played_moves, player_positions) - evaluate_five_in_row(eval_board, opponent, played_moves, player_positions) 
+    surrounding_score = evaluate_surrounding(eval_board, player, played_moves, player_positions) - evaluate_surrounding(eval_board, opponent, played_moves, player_positions) 
     return 0.5*score + 0.5*surrounding_score
 end
 
 
+function check_first_move(board, played_moves, player_positions)
+    eval_board = evaluate_board(board, [played_moves],[player_positions])
+    return check_five_in_a_row(played_moves, eval_board)
+end
 
 function evaluation_function(board::Array{Array{Int64, 1}}, played_moves::Array{Array{Int64, 1}}, move::Array{Int64, 1}, player_positions::Array{Int64, 1}, current_player::Int64, player::Int64)
     push!(played_moves, move)
@@ -73,12 +83,12 @@ function evaluate_five_in_row(board::Array{Array{Int64, 1}}, player::Int64, play
             end
 
             if op_count == 2
-                score = 0.0
+                continue
             else
                 if size(moves)[1] == 5
-                    score = 100
+                    score = Inf
                 else
-                    score = size(moves)[1] * 2
+                    score = size(moves)[1]
                 end
 
             end
@@ -87,18 +97,7 @@ function evaluate_five_in_row(board::Array{Array{Int64, 1}}, player::Int64, play
         push!(final_score, exp(score))
     end
 
-
-    for i in 1:size(hexagon_groups)[1]
-        hexagon_groups[i] = sort(hexagon_groups[i])
-    end
-
-    indexes = unique(i -> hexagon_groups[i], 1:length(hexagon_groups))
-    total_score = 0
-    for index in indexes
-        total_score += final_score[index]
-    end
-
-    return total_score
+    return maximum(final_score)
 end
 
 

@@ -39,9 +39,57 @@ function minimax_search(main_player, player::Int64, position::Array{Int64, 1}, d
         end
 
     end
+99999.0
+    pop!(played_moves)
+    pop!(player_positions)
+    return score, n_eval, played_moves
+end
+
+# Negamax Alpha-Beta Search
+function negamax_search_alpha_beta(main_player, player::Int64, position::Array{Int64, 1}, depth::Int64, maximizing_player::Bool, alpha::Float64, beta::Float64, played_moves::Array{Array{Int64,1},1}, player_positions, board::Array{Array{Int64,1}, 1}, n_eval::Int64)
+    push!(played_moves, position)
+    push!(player_positions, player)
+    opponent = get_opponent(player)
+
+    if depth == 0
+        score = evaluation_function(board, played_moves, player_positions, main_player, player)
+        if main_player != player
+            score = -score
+        end
+        n_eval = n_eval + 1
+        pop!(played_moves)
+        pop!(player_positions)
+
+        return score, n_eval, played_moves
+    end
+
+    score = -99999.0
+
+    node_moves = possible_moves(board, played_moves)
+    for child in node_moves
+
+        value, n_eval, played_moves = negamax_search_alpha_beta(main_player, opponent, child, depth - 1, false, -beta, -alpha, played_moves, player_positions, board, n_eval)
+        value = -value
+        if (value > score)
+            score = value
+        end
+
+        if (score > alpha)
+            alpha = score
+
+        end
+
+        if ( alpha >= beta)
+            break
+        end
+
+    
+    end
+    
 
     pop!(played_moves)
     pop!(player_positions)
+
     return score, n_eval, played_moves
 end
 
@@ -54,7 +102,7 @@ function minimax_search_alpha_beta(main_player, player::Int64, position::Array{I
     opponent = get_opponent(player)
 
     if depth == 0
-        score = evaluation_function(board, played_moves, player_positions, main_player)
+        score = evaluation_function(board, played_moves, player_positions, main_player, player)
         n_eval = n_eval + 1
         pop!(played_moves)
         pop!(player_positions)
