@@ -10,7 +10,7 @@ Andantino game and rules: http://www.di.fc.ul.pt/~jpn/gv/andantino.htm
  2. Run the .exe as administrator and install it in an easily accessbile location.
  3. Open the folder selected for installation and run the julia.exe file
  4. Once the Julia REPL opens, enter the following commands
- NOTE: The path is in UNIX format or separators using \\
+ NOTE: The path is in UNIX format or separators using `\\` \
  
  `julia> cd("<Location_of_the_andantino_zip_folder>")` \
  ` julia>include("install_deps.jl")`\
