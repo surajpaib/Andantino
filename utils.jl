@@ -237,6 +237,17 @@ function restart_game(winner)
     global move_count = 0
 end
 
+# Adapt Iterative Deepening Time
+function adapt_time_bound()
+    if move_count > 20
+        global max_time = 10
+    end
+
+    if move_count > 50
+        global max_time = 2
+    end
+end
+
 
 # function play_turn(player::Int64, max_search_ply::Int64, iterative_deeping_time::Int64, hash)
 #     moves_to_play = possible_moves(andantino_board)

@@ -4,13 +4,13 @@ include("utils.jl")
 include("win_conditions.jl")
 include("ui_render.jl")
 include("transposition_tables.jl")
-# include("performance_analysis.jl")
+include("performance_analysis.jl")
 
 
 # Global Variables
 
 # Max time allowed per move
-max_time = 10
+max_time = 2
 
 andantino_board = create_board()
 
@@ -38,6 +38,9 @@ function runAIvsAI()
       global original_board = deepcopy(andantino_board)
       move = run_search_algorithm(22)
       global move_count = move_count + 1
+      # Adapt Time based on Game status
+      adapt_time_bound()
+
       # CSV.write("metrics/performance_table.csv", performance_table)
 
       if move_count > 4 && check_game_end(move, andantino_board)
@@ -81,6 +84,9 @@ function play_handler(turn::String, search_ply::Int64, arg)
       # Check if played move is valid 
       if play_turn(player, collect(eval(Meta.parse(arg))))
         global move_count = move_count + 1
+
+        # Adapt Time based on Game status
+        adapt_time_bound()
 
         # CSV.write("metrics/$current_time-$alphabeta-$search_ply-$iterativedeepening-$pvs.csv", performance_table)
 
