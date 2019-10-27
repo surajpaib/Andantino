@@ -1,6 +1,7 @@
 include("board_functions.jl")
 include("win_conditions.jl")
 
+# Evaluation Function for the board state
 function evaluation_function(board::Array{Array{Int64, 1}}, played_moves::Array{Array{Int64, 1}}, player_positions::Array{Int64, 1}, player::Int64, current_player::Int64)
     if current_player == player
         if check_win_in_one(board, played_moves[1], player_positions[1])
@@ -14,12 +15,13 @@ function evaluation_function(board::Array{Array{Int64, 1}}, played_moves::Array{
     return 0.5*score + 0.5*surrounding_score
 end
 
-
+# Check if the player has a win for the first move played
 function check_win_in_one(board, played_moves, player_positions)
     eval_board = evaluate_board(board, [played_moves],[player_positions])
     return check_five_in_a_row(played_moves, eval_board)
 end
 
+# Evaluation function for move ordering
 function evaluation_function(board::Array{Array{Int64, 1}}, played_moves::Array{Array{Int64, 1}}, move::Array{Int64, 1}, player_positions::Array{Int64, 1}, current_player::Int64, player::Int64)
     push!(played_moves, move)
     push!(player_positions, current_player)
@@ -30,6 +32,7 @@ function evaluation_function(board::Array{Array{Int64, 1}}, played_moves::Array{
     return 0.5*score + 0.5*surrounding_score
 end
 
+# Evaluate surrounding condition. Check for flood fill and return Inf as score if surrounded
 function evaluate_surrounding(board::Array{Array{Int64, 1}}, player::Int64, played_moves::Array{Array{Int64, 1}}, player_positions)
     opponent = get_opponent(player)
     board_flood_fill = deepcopy(board)
@@ -42,6 +45,7 @@ function evaluate_surrounding(board::Array{Array{Int64, 1}}, player::Int64, play
 end
 
 
+# Evaluate pieces in a row
 function evaluate_five_in_row(board::Array{Array{Int64, 1}}, player::Int64, played_moves::Array{Array{Int64, 1}}, player_positions)
     occupied_hexagons = evaluate_board(board)
     factor = 1
@@ -101,7 +105,7 @@ function evaluate_five_in_row(board::Array{Array{Int64, 1}}, player::Int64, play
     return maximum(final_score)
 end
 
-
+# Check if neighbouring hexagons in a particular direction are of the same player. ( To determine length of the stack)
 function check_neighbouring_hexagons(last_hexagon::Array{Int64, 1}, board::Array{Array{Int64, 1}}, index::Int64, player, group::Array{Array{Int64,1}})
     adjacent_hex = find_adjacent_hexagons(last_hexagon)
 

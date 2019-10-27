@@ -4,18 +4,29 @@ include("utils.jl")
 include("win_conditions.jl")
 include("ui_render.jl")
 include("transposition_tables.jl")
-include("performance_analysis.jl")
+# include("performance_analysis.jl")
 
 
 # Global Variables
+
+# Max time allowed per move
 max_time = 10
+
 andantino_board = create_board()
+
+# Board copy for undo move
 original_board = deepcopy(andantino_board)
-alphabeta = false
+
+# Global variables selecting enhancements
+
+alphabeta = true
 move_count = 0
 pvs = false
-iterativedeepening = false
-performance_table = create_performance_table()
+search_ply = 5
+iterativedeepening = true
+
+
+# performance_table = create_performance_table()
 current_time = time()
 
 
@@ -27,7 +38,7 @@ function runAIvsAI()
       global original_board = deepcopy(andantino_board)
       move = run_search_algorithm(22)
       global move_count = move_count + 1
-      CSV.write("metrics/performance_table.csv", performance_table)
+      # CSV.write("metrics/performance_table.csv", performance_table)
 
       if move_count > 4 && check_game_end(move, andantino_board)
         restart_game("WHITE")
@@ -36,7 +47,7 @@ function runAIvsAI()
 
       global current_time = time()
       move = run_search_algorithm(11)
-      CSV.write("metrics/performance_table.csv", performance_table)
+      # CSV.write("metrics/performance_table.csv", performance_table)
 
       if move_count > 3 && check_game_end(move, andantino_board)
         restart_game("BLACK")
@@ -67,10 +78,11 @@ function play_handler(turn::String, search_ply::Int64, arg)
 
       end
 
+      # Check if played move is valid 
       if play_turn(player, collect(eval(Meta.parse(arg))))
         global move_count = move_count + 1
 
-        CSV.write("metrics/$current_time-$alphabeta-$search_ply-$iterativedeepening-$pvs.csv", performance_table)
+        # CSV.write("metrics/$current_time-$alphabeta-$search_ply-$iterativedeepening-$pvs.csv", performance_table)
 
         if move_count > 4 && check_game_end(collect(eval(Meta.parse(arg))), andantino_board)
           render_body(turn)
@@ -79,6 +91,7 @@ function play_handler(turn::String, search_ply::Int64, arg)
           return
         end
 
+        # Run search algorithm for the AI player 
         move = run_search_algorithm(opponent)
         
         if move_count > 3 && check_game_end(move, andantino_board)

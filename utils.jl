@@ -3,7 +3,7 @@ include("alpha_beta_search.jl")
 include("iterative_deepening.jl")
 import Base.Threads.@threads
 
-
+# Play random move for player
 function play_turn(player::Int64)
     moves_to_play = possible_moves(andantino_board)
     move = moves_to_play[rand(1:end)]
@@ -11,7 +11,7 @@ function play_turn(player::Int64)
     return move
 end
 
-
+# Play clicked move for player
 function play_turn(player::Int64, move::Array{Int64, 1})
     moves_to_play = possible_moves(andantino_board)
     if move in moves_to_play
@@ -23,7 +23,7 @@ function play_turn(player::Int64, move::Array{Int64, 1})
     end
 end
 
-
+# Start AB search for player
 function start_search(player::Int64, search_ply::Int64, alpha::Float64, beta::Float64)
     moves_to_play = possible_moves(andantino_board)
     number_of_moves = size(moves_to_play)[1]
@@ -65,14 +65,14 @@ function start_search(player::Int64, search_ply::Int64, alpha::Float64, beta::Fl
 
     time_taken = time() - prev_time
     evaluations = sum(n_evaluations)
-    push!(performance_table, [time_taken, 0, evaluations, number_of_moves, player])
+    # push!(performance_table, [time_taken, 0, evaluations, number_of_moves, player])
     best_move = findmax(root_node_scores)[2]
     andantino_board[root_node_moves[best_move][1]][root_node_moves[best_move][2]] = player
     return root_node_moves[best_move]
 
 end
 
-
+# Start parallelized AB search
 function start_parallelized_search(player::Int64, search_ply::Int64, alpha::Float64, beta::Float64)
     moves_to_play = possible_moves(andantino_board)
     number_of_moves = size(moves_to_play)[1]
@@ -99,7 +99,7 @@ function start_parallelized_search(player::Int64, search_ply::Int64, alpha::Floa
 
     time_taken = time() - prev_time
     evaluations = sum(n_evaluations)
-    push!(performance_table, [time_taken, total_bytes_alloc, evaluations, number_of_moves, player])
+    # push!(performance_table, [time_taken, total_bytes_alloc, evaluations, number_of_moves, player])
 
     best_move = findmax(move_scores)[2]
     andantino_board[moves_to_play[best_move][1]][moves_to_play[best_move][2]] = player
@@ -109,7 +109,7 @@ end
 
  
 
-
+# Start Minimax Search for player
 function start_search(player::Int64, search_ply::Int64)
     moves_to_play = possible_moves(andantino_board)
     number_of_moves = size(moves_to_play)[1]
@@ -134,7 +134,7 @@ function start_search(player::Int64, search_ply::Int64)
 
     time_taken = sum(total_time)
     evaluations = sum(n_evaluations)
-    push!(performance_table, [time_taken, total_bytes_alloc, evaluations, number_of_moves, player])
+    # push!(performance_table, [time_taken, total_bytes_alloc, evaluations, number_of_moves, player])
 
     best_move = findmax(move_scores)[2]
     andantino_board[moves_to_play[best_move][1]][moves_to_play[best_move][2]] = player
@@ -143,6 +143,7 @@ function start_search(player::Int64, search_ply::Int64)
 end
 
 
+# Start Search with Iterative Deepening and Transposition Tables enabled
 function start_search(player::Int64, max_search_ply::Int64, hash::Int64, ZobristTable)
 
     moves_to_play = possible_moves(andantino_board)
@@ -166,6 +167,10 @@ function start_search(player::Int64, max_search_ply::Int64, hash::Int64, Zobrist
             return_vals, id_time, bytes_alloc, _, _ = @timed iterative_deeping(ply, player, moves_to_play, hash, ZobristTable)
             if check_timeout()
                 println("Time ran out at ply: ", ply)
+                if ply == 1
+                    return play_turn(player)
+                    
+                end
                 break
             end
             move = return_vals[1]
@@ -189,7 +194,7 @@ function start_search(player::Int64, max_search_ply::Int64, hash::Int64, Zobrist
        
     end
     
-    push!(performance_table, [total_time, total_bytes_alloc, n_evaluations, number_of_moves, player])
+    # push!(performance_table, [total_time, total_bytes_alloc, n_evaluations, number_of_moves, player])
 
 
     andantino_board[move[1]][move[2]] = player
@@ -197,6 +202,8 @@ function start_search(player::Int64, max_search_ply::Int64, hash::Int64, Zobrist
 
 end
 
+
+# Check for the time constraint in Iterative Deepening
 function check_timeout()
     if time() - current_time > max_time
         return true
@@ -206,6 +213,7 @@ function check_timeout()
 end
 
 
+# Start Search algorithm based on enhancements enabled
 function run_search_algorithm(player)
       if iterativedeepening
         ZobristTable = initTable()
@@ -221,10 +229,10 @@ function run_search_algorithm(player)
     return move
 end
 
-
+# Restart Game after either player wins
 function restart_game(winner)
     render_win_page(winner)
-    global performance_table = create_performance_table()
+    # global performance_table = create_performance_table()
     global andantino_board = create_board()
     global move_count = 0
 end

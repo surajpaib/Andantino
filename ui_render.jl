@@ -9,8 +9,8 @@ UI Render Javascript Code
 using Blink
 w = Window()
 load!(w, "static/app.css")
-search_ply = 4
 
+# Render the HTML, JS and CSS for the landing page
 function render_page(message)
     body!(w, """<div id="welcome"><h1>$message</h1><br/><br/><br/>
     Select the Game Mode:
@@ -43,10 +43,12 @@ function render_page(message)
 """);
 end
 
+# Render the winning page
 function render_win_page(winner)
     render_page("$winner WINS!!!")
 end
 
+# Render the body of the page after each move
 function render_body(turn)
     playable_moves = possible_moves(andantino_board)
     occupied_hexagons = evaluate_board(andantino_board)
@@ -196,12 +198,8 @@ function render_body(turn)
   =#
 
 
-handle(w, "start") do arg
-    println(arg)
-    global iterativedeepening = arg[3]
-    global pvs = arg[4]
-    global alphabeta= arg[5]
-    global search_ply = parse(Int, arg[2])
+# Handle start button press
+handle(w, "start") do arg   
     if arg[1] == "white"
       play_turn(11, [10, 10])
       render_body("white")
@@ -225,24 +223,24 @@ handle(w, "start") do arg
 end
 
 
-
+# Handle click on white hexagons
 handle(w, "white") do arg
     println("Search Ply: ", search_ply)
     play_handler("white", search_ply, arg)
   end
   
-  
+  # Handle click on black hexagon
   handle(w, "black") do arg
     play_handler("black", search_ply, arg)
   end
-  
-  
+
+  # Handle click on undo
   handle(w, "undo") do arg
     global andantino_board = deepcopy(original_board)
     render_body(arg)
   end
   
-  
+  # Handle click on black-two player mode
   handle(w, "blacktwoplayer") do arg
     global original_board = deepcopy(andantino_board)
     if play_turn(11, collect(eval(Meta.parse(arg))))
@@ -258,7 +256,7 @@ handle(w, "white") do arg
   end
   
   
-  
+  # Handle click on white-two player mode
   handle(w, "whitetwoplayer") do arg
   
     global original_board = deepcopy(andantino_board)
@@ -276,7 +274,7 @@ handle(w, "white") do arg
     end
   end
 
-
+# Relay logs to javascript ui
 function ui_logs(message)
   js(w, Blink.JSString("""console.log("$message")"""))
 end

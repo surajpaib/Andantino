@@ -4,7 +4,7 @@ include("evaluation_functions.jl")
 include("transposition_tables.jl")
 
 
-# Minimax Search
+# Vanilla Minimax Search
 function minimax_search(main_player, player::Int64, position::Array{Int64, 1}, depth::Int64, maximizing_player::Bool, played_moves::Array{Array{Int64,1},1}, player_positions, board::Array{Array{Int64,1}, 1}, n_eval::Int64)
     push!(played_moves, position)
     push!(player_positions, player)
@@ -18,6 +18,8 @@ function minimax_search(main_player, player::Int64, position::Array{Int64, 1}, d
         return score, n_eval, played_moves
     end
 
+
+    # Expand Children for Maximizing Player
     if maximizing_player
         score = -99999.0
         node_moves = possible_moves(board, played_moves)
@@ -28,6 +30,9 @@ function minimax_search(main_player, player::Int64, position::Array{Int64, 1}, d
             end
       
         end
+
+
+    # Expand Children for Minimizing Player
     else
         score = 99999.0
         node_moves = possible_moves(board, played_moves)
@@ -39,7 +44,6 @@ function minimax_search(main_player, player::Int64, position::Array{Int64, 1}, d
         end
 
     end
-99999.0
     pop!(played_moves)
     pop!(player_positions)
     return score, n_eval, played_moves
@@ -62,6 +66,8 @@ function minimax_search_alpha_beta(main_player, player::Int64, position::Array{I
         return score, n_eval, played_moves
     end
 
+    # Expand Children for Maximizing Player
+
     if maximizing_player
         score = -Inf
         node_moves = possible_moves(board, played_moves)
@@ -83,6 +89,9 @@ function minimax_search_alpha_beta(main_player, player::Int64, position::Array{I
 
       
         end
+
+    # Expand Children for Minimizing Player
+
     else
         score = Inf
         node_moves = possible_moves(board, played_moves)
@@ -225,7 +234,7 @@ function minimax_search_alpha_beta(main_player, player::Int64, position::Array{I
         return -Inf, n_eval, played_moves
     end
 
-
+    # Copy alpha=beta bounds
     a = deepcopy(alpha)
     b = deepcopy(beta)
 
@@ -233,6 +242,7 @@ function minimax_search_alpha_beta(main_player, player::Int64, position::Array{I
     push!(player_positions, player)
     opponent = get_opponent(player)
 
+    # Generate new hash for current board position
     if player == 22
         hash = xor(hash, ZobristTable[2][position[1]][position[2]])
     else
@@ -241,6 +251,7 @@ function minimax_search_alpha_beta(main_player, player::Int64, position::Array{I
 
     entry = transpositionTableLookup(hash)
 
+    # Check for depth and player constraint
     if length(entry) > 0 && entry["depth"] >= depth && entry["player"] == player
         if entry["flag"] == "EXACT"
             return entry["value"], n_eval, played_moves
@@ -271,7 +282,7 @@ function minimax_search_alpha_beta(main_player, player::Int64, position::Array{I
         node_moves = possible_moves(board, played_moves)
 
 
-        # Sorting Nodes Before Expanding the tree
+        # Sorting Nodes Before Expanding the tree / Commented out because evaluation at every node slows down the search
         # sort!(node_moves, by= x -> evaluation_function(board, played_moves, x, player_positions, opponent, main_player), rev=true)
 
         for child in node_moves
@@ -297,8 +308,7 @@ function minimax_search_alpha_beta(main_player, player::Int64, position::Array{I
         node_moves = possible_moves(board, played_moves)
          
 
-        # Sorting Nodes Before Expanding the tree
-
+        # Sorting Nodes Before Expanding the tree / Commented out because evaluation at every node slows down the search
         # sort!(node_moves, by= x -> evaluation_function(board, played_moves, x, player_positions, opponent, main_player))
 
         for child in node_moves
@@ -320,7 +330,7 @@ function minimax_search_alpha_beta(main_player, player::Int64, position::Array{I
     end
 
 
-
+    # Saving current node to the Transposition Table using the 'Replacement' Strategy
     entry["player"] = player
     entry["value"] = score
     if score <= a
@@ -393,6 +403,8 @@ function minimax_search_alpha_beta(main_player, player::Int64, position::Array{I
         # Sorting Nodes Before Expanding the tree
         # sort!(node_moves, by= x -> evaluation_function(board, played_moves, x, player_positions, opponent, main_player), rev=true)
 
+
+        # Checking along the principal Continuation from the last search first
         if size(pvs_moves)[1] > 0
             if pvs_moves[1] in node_moves
                 value, n_eval, played_moves = minimax_search_alpha_beta(main_player, opponent, child, depth - 1, false, a, beta, played_moves, player_positions, board, n_eval, hash, ZobristTable,  pvs_moves)
@@ -430,6 +442,8 @@ function minimax_search_alpha_beta(main_player, player::Int64, position::Array{I
 
         score = 99999.0
         node_moves = possible_moves(board, played_moves)
+                # Checking along the principal Continuation from the last search first
+
         if size(pvs_moves)[1] > 0
             if pvs_moves[1] in node_moves
                 value, n_eval, played_moves = minimax_search_alpha_beta(main_player, opponent, child, depth - 1, true, alpha, b, played_moves, player_positions, board, n_eval, hash, ZobristTable, pvs_moves)
