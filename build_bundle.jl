@@ -1,4 +1,9 @@
+module Andantino
+include("andantino_game.jl")
 
-# build.jl
-using ApplicationBuilder
-build_app_bundle("julia_main.jl", appname="Andantino");
+Base.@ccallable function julia_main(ARGS::Vector{String})::Cint
+    play_game()
+    return 0
+end
+
+end

@@ -8,7 +8,7 @@ include("performance_analysis.jl")
 
 
 # Global Variables
-ZobristTable = initTable()
+max_time = 10
 andantino_board = create_board()
 original_board = deepcopy(andantino_board)
 alphabeta = false
@@ -23,74 +23,36 @@ current_time = time()
 # AI vs AI mode Play
 function runAIvsAI()
     while true
-    
+      global current_time = time()
       global original_board = deepcopy(andantino_board)
-      if iterativedeepening
-        hash = computeHash(ZobristTable, andantino_board)
-        move = play_turn(22, search_ply, 3, hash)
-
-      elseif pvs
-        move = play_turn(22, search_ply, 3)
-
-      elseif alphabeta
-        move = play_turn(22, search_ply, -Inf, Inf)
-      else
-        move = play_turn(22, search_ply)
-
-      end
-
-      move_count = move_count + 1
+      move = run_search_algorithm(22)
+      global move_count = move_count + 1
       CSV.write("metrics/performance_table.csv", performance_table)
 
       if move_count > 4 && check_game_end(move, andantino_board)
-        render_win_page("WHITE")
-        CSV.write("metrics/performance_table.csv", performance_table)
-        global performance_table = create_performance_table()
-
-        global andantino_board = create_board()
-        global move_count = 0
+        restart_game("WHITE")
         return
       end
 
-
-      if iterativedeepening
-        hash = computeHash(ZobristTable, andantino_board)
-        move = play_turn(11, search_ply, 3, hash)
-
-      elseif pvs
-        move = play_turn(11, search_ply, 3)
-
-      elseif alphabeta
-        move = play_turn(11, search_ply, -Inf, Inf)
-
-      else
-        move = play_turn(11, search_ply)
-      end 
+      global current_time = time()
+      move = run_search_algorithm(11)
       CSV.write("metrics/performance_table.csv", performance_table)
 
       if move_count > 3 && check_game_end(move, andantino_board)
-        CSV.write("metrics/performance_table.csv", performance_table)
-        render_win_page("BLACK")
-        global performance_table = create_performance_table()
-
-        global andantino_board = create_board()
-        global move_count = 0
-
+        restart_game("BLACK")
         return
       end
 
       render_body("none")
 
     end
-
-
-  end
+end
 
 
 function play_handler(turn::String, search_ply::Int64, arg)
       global original_board = deepcopy(andantino_board)
       piece_map = Dict()
-
+      global current_time = time()
       if turn == "white"
         player = 22
         opponent = 11
@@ -106,46 +68,23 @@ function play_handler(turn::String, search_ply::Int64, arg)
       end
 
       if play_turn(player, collect(eval(Meta.parse(arg))))
-        open("tmp_board.txt", "w") do f
-            write(f, string(andantino_board))
-        end
-        move_count = move_count + 1
+        global move_count = move_count + 1
 
-        if move_count > 8
-          search_ply = 3
-        end
         CSV.write("metrics/$current_time-$alphabeta-$search_ply-$iterativedeepening-$pvs.csv", performance_table)
 
         if move_count > 4 && check_game_end(collect(eval(Meta.parse(arg))), andantino_board)
           render_body(turn)
           sleep(2)
-          render_win_page(piece_map[player])
-          global andantino_board = create_board()
-          global move_count = 0
-
+          restart_game(piece_map[player])
           return
         end
 
-        if iterativedeepening
-          hash = computeHash(ZobristTable, andantino_board)
-          move = play_turn(opponent, search_ply, 3, hash)
-    
-        elseif pvs
-          move = play_turn(opponent, search_ply, 3)
-    
-        elseif alphabeta
-          move = play_turn(opponent, search_ply, -Inf, Inf)
-        else
-          move = play_turn(opponent, search_ply)
-    
-        end
+        move = run_search_algorithm(opponent)
         
         if move_count > 3 && check_game_end(move, andantino_board)
           render_body(turn)
           sleep(2)
-          render_win_page(piece_map[opponent])
-          global andantino_board = create_board()
-          global move_count = 0
+          restart_game(piece_map[opponent])
 
           return
         end
@@ -156,7 +95,6 @@ function play_handler(turn::String, search_ply::Int64, arg)
 
 
 function play_game()
-
   render_page("Welcome to Andantino")
   ui_logs("GAME STARTED")
 

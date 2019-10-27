@@ -3,7 +3,7 @@ include("win_conditions.jl")
 
 function evaluation_function(board::Array{Array{Int64, 1}}, played_moves::Array{Array{Int64, 1}}, player_positions::Array{Int64, 1}, player::Int64, current_player::Int64)
     if current_player == player
-        if check_first_move(board, played_moves[1], player_positions[1])
+        if check_win_in_one(board, played_moves[1], player_positions[1])
             return Inf
         end
     end
@@ -15,7 +15,7 @@ function evaluation_function(board::Array{Array{Int64, 1}}, played_moves::Array{
 end
 
 
-function check_first_move(board, played_moves, player_positions)
+function check_win_in_one(board, played_moves, player_positions)
     eval_board = evaluate_board(board, [played_moves],[player_positions])
     return check_five_in_a_row(played_moves, eval_board)
 end
@@ -25,8 +25,9 @@ function evaluation_function(board::Array{Array{Int64, 1}}, played_moves::Array{
     push!(player_positions, current_player)
     eval_board = evaluate_board(board, played_moves, player_positions)
     opponent = get_opponent(player)
-    score = evaluate_five_in_row(eval_board, player, played_moves, player_positions) - evaluate_five_in_row(eval_board, opponent, played_moves, player_positions)
-    return score
+    score = evaluate_five_in_row(eval_board, player, played_moves, player_positions) - evaluate_five_in_row(eval_board, opponent, played_moves, player_positions) 
+    surrounding_score = evaluate_surrounding(eval_board, player, played_moves, player_positions) - evaluate_surrounding(eval_board, opponent, played_moves, player_positions) 
+    return 0.5*score + 0.5*surrounding_score
 end
 
 function evaluate_surrounding(board::Array{Array{Int64, 1}}, player::Int64, played_moves::Array{Array{Int64, 1}}, player_positions)
@@ -51,7 +52,7 @@ function evaluate_five_in_row(board::Array{Array{Int64, 1}}, player::Int64, play
         for index in 1:6
             if board[occupied_hexagons[i][1]][occupied_hexagons[i][2]] == player
                 
-                group = check_next_hexagons(occupied_hexagons[i], board, index, player, Array{Int64,1}[occupied_hexagons[i]])
+                group = check_neighbouring_hexagons(occupied_hexagons[i], board, index, player, Array{Int64,1}[occupied_hexagons[i]])
                 push!(hexagon_groups, group)
             end
         end
@@ -60,10 +61,10 @@ function evaluate_five_in_row(board::Array{Array{Int64, 1}}, player::Int64, play
 
     unique!(hexagon_groups)
     max_size = maximum([size(group)[1] for group in hexagon_groups])
-    filter!(x-> size(x)[1]==max_size, hexagon_groups)
+    max_hexagon_groups = filter(x-> size(x)[1]==max_size, hexagon_groups)
 
     final_score = []
-    for moves in hexagon_groups
+    for moves in max_hexagon_groups
         score = 0.0
         op_count = 0
         start_element = moves[1]
@@ -101,13 +102,13 @@ function evaluate_five_in_row(board::Array{Array{Int64, 1}}, player::Int64, play
 end
 
 
-function check_next_hexagons(last_hexagon::Array{Int64, 1}, board::Array{Array{Int64, 1}}, index::Int64, player, group::Array{Array{Int64,1}})
+function check_neighbouring_hexagons(last_hexagon::Array{Int64, 1}, board::Array{Array{Int64, 1}}, index::Int64, player, group::Array{Array{Int64,1}})
     adjacent_hex = find_adjacent_hexagons(last_hexagon)
 
     if check_board_limits(adjacent_hex[index])
         if board[adjacent_hex[index][1]][adjacent_hex[index][2]] == player
             push!(group, adjacent_hex[index])
-            return check_next_hexagons(adjacent_hex[index], board, index, player, group)
+            return check_neighbouring_hexagons(adjacent_hex[index], board, index, player, group)
         else
             return group
         end

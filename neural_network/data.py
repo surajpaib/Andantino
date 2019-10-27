@@ -34,7 +34,7 @@ model.compile(loss='binary_crossentropy',
               optimizer=opt,
               metrics=['accuracy'])
 
-for input_chunk, output_chunk in zip(pd.read_csv('../training_input.csv', header=None, chunksize=100000), pd.read_csv('../training_output.csv', header=None,chunksize=100000)):
+for input_chunk, output_chunk in zip(pd.read_csv('training_input.csv', header=None, chunksize=100000), pd.read_csv('training_output.csv', header=None,chunksize=100000)):
     
     input_chunk = input_chunk.replace(-1, 0)
     input_chunk = input_chunk.replace(11, 1)
@@ -47,7 +47,7 @@ for input_chunk, output_chunk in zip(pd.read_csv('../training_input.csv', header
     print(np.shape(train_input))
     print(np.shape(train_output))
 
-    model.fit(train_input, train_output, batch_size=1024)
+    # model.fit(train_input, train_output, batch_size=1024)
 
 
 

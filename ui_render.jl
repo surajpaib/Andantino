@@ -23,52 +23,19 @@ function render_page(message)
     </select>
     <br><br>
 
-    Pick the search ply:
-    <br/>
-
-    <div class="slidecontainer">
-    <input type="range" min="1" max="10" value="3" class="slider" id="search_ply">
-    <p><h4>Search Ply: <span id="demo"></span></h4></p>
-
-    </div>
-
-    <br/><br/>
-    <label class="container">Alpha Beta Search
-    <input type="checkbox" id="alphabeta">
-    <span class="checkmark"></span>
-    </label><br/>
-    <label class="container">Transposition Tables
-    <input type="checkbox" id="iterativedeep">
-    <span class="checkmark"></span>
-    </label><br/>
-    <label class="container">PVS
-    <input type="checkbox" id="pvs">
-    <span class="checkmark"></span>
-    </label>
+    
 
     <button onclick="onSubmit()" id="white">SUBMIT</button>
     </div>
   <script>
-    
-    var search_ply = document.getElementById("search_ply");
-
-    var output = document.getElementById("demo");
-    output.innerHTML = search_ply.value;
-
-    search_ply.oninput = function() {
-    output.innerHTML = this.value;
-    }
 
   function onSubmit(){
     var white = document.getElementById("white");
     white.removeAttribute('onclick');
     var game_mode = document.getElementById("game_mode").value;
-    var search_ply = document.getElementById("search_ply");
-    var iterativedeepval = document.getElementById("iterativedeep").checked;
-    var pvsval = document.getElementById("pvs").checked;
-    var alphabeta = document.getElementById("alphabeta").checked;
+ 
 
-    Blink.msg("start", [game_mode, search_ply.value, iterativedeepval, pvsval, alphabeta]);
+    Blink.msg("start", [game_mode, "5", true, false, false]);
   }
 
 
