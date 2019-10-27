@@ -12,8 +12,8 @@ Andantino game and rules: http://www.di.fc.ul.pt/~jpn/gv/andantino.htm
  4. Once the Julia REPL opens, enter the following commands
  NOTE: The path is in UNIX format or separators using \\
  
- `julia> cd("<Location_of_the_andantino_zip_folder>")`
- ` julia>include("install_deps.jl")`
+ `julia> cd("<Location_of_the_andantino_zip_folder>")` \
+ ` julia>include("install_deps.jl")`\
 ` julia>include("andantino_game.jl")`
 
 ## Linux
