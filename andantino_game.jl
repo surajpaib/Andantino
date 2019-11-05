@@ -6,143 +6,122 @@ include("ui_render.jl")
 include("transposition_tables.jl")
 include("performance_analysis.jl")
 
-ZobristTable = initTable()
+
+# Global Variables
+
+# Max time allowed per move
+max_time = 2
+
 andantino_board = create_board()
+
+# Board copy for undo move
 original_board = deepcopy(andantino_board)
-alphabeta = false
+
+# Global variables selecting enhancements
+
+alphabeta = true
 move_count = 0
 pvs = false
-iterativedeepening = false
-performance_table = create_performance_table()
+search_ply = 5
+iterativedeepening = true
+
+
+# performance_table = create_performance_table()
+current_time = time()
+
+
+
+# AI vs AI mode Play
 function runAIvsAI()
-  while true
-  
-    global original_board = deepcopy(andantino_board)
-    if iterativedeepening
-      hash = computeHash(ZobristTable, andantino_board)
-      move = play_turn(22, search_ply, 3, hash)
+    while true
+      global current_time = time()
+      global original_board = deepcopy(andantino_board)
+      move = run_search_algorithm(22)
+      global move_count = move_count + 1
+      # Adapt Time based on Game status
+      adapt_time_bound()
 
-    elseif pvs
-      move = play_turn(22, search_ply, 3)
+      # CSV.write("metrics/performance_table.csv", performance_table)
 
-    elseif alphabeta
-      move = play_turn(22, search_ply, -Inf, Inf)
-    else
-      move = play_turn(22, search_ply)
+      if move_count > 4 && check_game_end(move, andantino_board)
+        restart_game("WHITE")
+        return
+      end
+
+      global current_time = time()
+      move = run_search_algorithm(11)
+      # CSV.write("metrics/performance_table.csv", performance_table)
+
+      if move_count > 3 && check_game_end(move, andantino_board)
+        restart_game("BLACK")
+        return
+      end
+
+      render_body("none")
 
     end
-
-    move_count = move_count + 1
-    CSV.write("performance_table.csv", performance_table)
-
-    if move_count > 4 && check_game_end(move, andantino_board)
-      render_win_page("WHITE")
-      CSV.write("performance_table.csv", performance_table)
-      global performance_table = create_performance_table()
-
-      global andantino_board = create_board()
-      global move_count = 0
-      return
-    end
-
-    if move_count > 15
-      global search_ply = 3
-    end
-
-    if iterativedeepening
-      hash = computeHash(ZobristTable, andantino_board)
-      move = play_turn(11, search_ply, 3, hash)
-
-    elseif pvs
-      move = play_turn(11, search_ply, 3)
-
-    elseif alphabeta
-      move = play_turn(11, search_ply, -Inf, Inf)
-
-    else
-      move = play_turn(11, search_ply)
-    end 
-    CSV.write("performance_table.csv", performance_table)
-
-    if move_count > 3 && check_game_end(move, andantino_board)
-      CSV.write("performance_table.csv", performance_table)
-      render_win_page("BLACK")
-      global performance_table = create_performance_table()
-
-      global andantino_board = create_board()
-      global move_count = 0
-
-      return
-    end
-
-    render_body("none")
-
-  end
-
-
 end
 
 
 function play_handler(turn::String, search_ply::Int64, arg)
-    global original_board = deepcopy(andantino_board)
-    piece_map = Dict()
+      global original_board = deepcopy(andantino_board)
+      piece_map = Dict()
+      global current_time = time()
+      if turn == "white"
+        player = 22
+        opponent = 11
+        piece_map[player] = "WHITE"
+        piece_map[opponent] = "BLACK"
 
-    if turn == "white"
-      player = 22
-      opponent = 11
-      piece_map[player] = "WHITE"
-      piece_map[opponent] = "BLACK"
-
-    else
-      player = 11
-      opponent = 22
-      piece_map[player] = "BLACK"
-      piece_map[opponent] = "WHITE"
-
-    end
-
-    if play_turn(player, collect(eval(Meta.parse(arg))))
-      move_count = move_count + 1
-
-
-      if move_count > 4 && check_game_end(collect(eval(Meta.parse(arg))), andantino_board)
-        render_win_page(piece_map[player])
-        global andantino_board = create_board()
-        global move_count = 0
-
-        return
-      end
-
-      if iterativedeepening
-        hash = computeHash(ZobristTable, andantino_board)
-        move = play_turn(opponent, search_ply, 3, hash)
-  
-      elseif pvs
-        move = play_turn(opponent, search_ply, 3)
-  
-      elseif alphabeta
-        move = play_turn(opponent, search_ply, -Inf, Inf)
       else
-        move = play_turn(opponent, search_ply)
-  
+        player = 11
+        opponent = 22
+        piece_map[player] = "BLACK"
+        piece_map[opponent] = "WHITE"
+
       end
-      
-      if move_count > 3 && check_game_end(move, andantino_board)
 
-        render_win_page(piece_map[opponent])
-        global andantino_board = create_board()
-        global move_count = 0
+      # Check if played move is valid 
+      if play_turn(player, collect(eval(Meta.parse(arg))))
+        global move_count = move_count + 1
 
-        return
+        # Adapt Time based on Game status
+        adapt_time_bound()
+
+        # CSV.write("metrics/$current_time-$alphabeta-$search_ply-$iterativedeepening-$pvs.csv", performance_table)
+
+        if move_count > 4 && check_game_end(collect(eval(Meta.parse(arg))), andantino_board)
+          render_body(turn)
+          sleep(2)
+          restart_game(piece_map[player])
+          return
+        end
+
+        # Run search algorithm for the AI player 
+        move = run_search_algorithm(opponent)
+        
+        if move_count > 3 && check_game_end(move, andantino_board)
+          render_body(turn)
+          sleep(2)
+          restart_game(piece_map[opponent])
+
+          return
+        end
+        render_body(turn)
+
       end
-      render_body(turn)
+  end
 
-    end
+
+function play_game()
+  render_page("Welcome to Andantino")
+  ui_logs("GAME STARTED")
+
+  while true  
+      yield() 
+  end
+
 end
 
-render_page("Welcome to Andantino")
-ui_logs("GAME STARTED")
 
-while true  
-    yield() 
-end
+play_game()

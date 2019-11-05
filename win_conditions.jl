@@ -3,7 +3,7 @@ include("game_moves.jl")
 
 
 
-# Check for 5 in a line hexagons for one win condition
+# Check for the next hexagon in a particular direction 
 function check_next_hexagons(last_hexagon::Array{Int64, 1}, board::Array{Array{Int64, 1}}, counter::Int64, index::Int64)
     adjacent_hex = find_adjacent_hexagons(last_hexagon)
 
@@ -25,7 +25,7 @@ function check_next_hexagons(last_hexagon::Array{Int64, 1}, board::Array{Array{I
 end
 
 
-
+# Check for five hexagons in a row
 function check_five_in_a_row(last_hexagon::Array{Int64, 1}, board::Array{Array{Int64, 1}})
     adjacent_hex = find_adjacent_hexagons(last_hexagon)
     for i in 1:size(adjacent_hex)[1]
@@ -43,7 +43,6 @@ end
 
 
 # Check for Surrounded Hexagons of Opponent
-
 function check_surround_piece(last_hexagon::Array{Int64, 1}, board::Array{Array{Int64, 1}})
     current_player = board[last_hexagon[1]][last_hexagon[2]]
     opponent = get_opponent(current_player)
@@ -53,7 +52,7 @@ function check_surround_piece(last_hexagon::Array{Int64, 1}, board::Array{Array{
 end
 
 
-
+# Run floodfill algorithm 
 function flood_fill_algorithm(position::Array{Int64, 1}, board_flood_fill::Array{Array{Int64, 1}}, opponent::Int64)
     adjacent_hex = find_adjacent_hexagons(position)
     for hexagons in adjacent_hex
@@ -66,6 +65,7 @@ function flood_fill_algorithm(position::Array{Int64, 1}, board_flood_fill::Array
     end  
 end
 
+# Check either win conditions to determine game end
 function check_game_end(last_hexagon::Array{Int64, 1}, board::Array{Array{Int64, 1}})
     return check_five_in_a_row(last_hexagon, board) || check_surround_piece(last_hexagon, board)
 

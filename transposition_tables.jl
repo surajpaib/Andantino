@@ -1,5 +1,6 @@
 TT = Dict()
 
+# Initialize the Zobrist Table
 function initTable()
     RandomValues = rand(Int64, 542)
     upper_board = Array{Int64,1}[[-1 for i in 1:(10+j)] for j in 0:9]
@@ -23,7 +24,7 @@ function initTable()
 end
 
 
-
+# Compute Hash for a board state
 function computeHash(ZobristTable, andantino_board)
     h = 0
     for (i, row) in enumerate(andantino_board)
@@ -40,7 +41,7 @@ function computeHash(ZobristTable, andantino_board)
     return h
 end
 
-
+# TT lookup
 function transpositionTableLookup(node)
     if haskey(TT, node)
         return TT[node]
@@ -49,7 +50,7 @@ function transpositionTableLookup(node)
     end
 end
 
-
+## TT Store
 function transpositionTableStore(node, entry)
     TT[node] = entry   
 end
